@@ -8,6 +8,8 @@
 import Foundation
 
 enum StoryStep: Hashable {
-    case intro
-    case tutorial
+    case headPhoneCheck
+    
+    case intro(page: Int)
+    
 }

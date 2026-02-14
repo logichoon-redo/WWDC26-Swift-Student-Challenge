@@ -12,33 +12,35 @@ enum NavigationDirection {
     case next
 }
 
-struct PageNavigationButton<Destination: View>: View {
+struct PageNavigationButton: View {
     let direction: NavigationDirection
-    let destination: () -> Destination
+    let action: () -> Void
+    let text: String
     
     init(
         direction: NavigationDirection,
-        @ViewBuilder destination: @escaping () -> Destination
+        text: String,
+        action: @escaping () -> Void
     ) {
         self.direction = direction
-        self.destination = destination
+        self.text = text
+        self.action = action
     }
     
     var body: some View {
-        NavigationLink {
-            destination()
-        } label: {
+        Button(action: action) {
             HStack {
                 if direction == .next {
-                    Text("NEXT")
+                    Text(text)
                 }
                 
                 Image(systemName: iconName)
                 
                 if direction == .prev {
-                    Text("PREV")
+                    Text(text)
                 }
             }
+            .bold()
             .font(.system(size: .smallFontSize))
             .foregroundStyle(.white.opacity(0.8))
         }

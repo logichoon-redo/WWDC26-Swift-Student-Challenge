@@ -22,7 +22,7 @@ struct TypingTextView: View {
     init(text: String,
          width: CGFloat,
          height: CGFloat,
-         typingSpeed: UInt64 = 50_000_000,
+         typingSpeed: UInt64 = 20_000_000,
          pauseDelay: UInt64 = 500_000_000,
          pauseMarker: String = "|",
          onComplete: ((Bool) -> Void)? = nil) {

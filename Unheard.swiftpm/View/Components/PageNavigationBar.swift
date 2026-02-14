@@ -7,42 +7,46 @@
 
 import SwiftUI
 
-struct PageNavigationBar<PrevDestination: View, NextDestination: View>: View {
+struct PageNavigationBar: View {
     let showPrev: Bool
     let showNext: Bool
-    let prevDestination: () -> PrevDestination
-    let nextDestination: () -> NextDestination
+    let prevText: String
+    let nextText: String
+    let prevDestination: () -> Void
+    let nextDestination: () -> Void
     
     init(showPrev: Bool = true,
          showNext: Bool = true,
-         @ViewBuilder prevDestination: @escaping () -> PrevDestination,
-         @ViewBuilder nextDestination: @escaping () -> NextDestination) {
+         prevText: String = "PREV",
+         nextText: String = "NEXT",
+         prevDestination: @escaping () -> Void,
+         nextDestination: @escaping () -> Void) {
         self.showPrev = showPrev
         self.showNext = showNext
+        self.prevText = prevText
+        self.nextText = nextText
         self.prevDestination = prevDestination
         self.nextDestination = nextDestination
     }
     
     var body: some View {
-        HStack {
-            if showPrev {
-                PageNavigationButton(direction: .prev,
-                                     destination: prevDestination)
-            } else {
+        ZStack {
+            HStack {
+                if showPrev {
+                    PageNavigationButton(direction: .prev,
+                                         text: prevText,
+                                         action: prevDestination)
+                }
+                
                 Spacer()
-                    .frame(width: 44)
+                
+                if showNext {
+                    PageNavigationButton(direction: .next,
+                                         text: nextText,
+                                         action: nextDestination)
+                }
             }
-            
-            Spacer()
-            
-            if showNext {
-                PageNavigationButton(direction: .next,
-                                     destination: nextDestination)
-            } else {
-                Spacer()
-                    .frame(width: 44)
-            }
+            .padding(.horizontal, .defaultSpacing)
         }
-        .padding(.horizontal, .defaultSpacing)
     }
 }
