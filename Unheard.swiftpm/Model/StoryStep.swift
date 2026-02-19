@@ -7,9 +7,18 @@
 
 import Foundation
 
+enum ScenePhase: Hashable {
+    case dialogue(page: Int)
+    case quiz(page: Int)
+    case tts
+}
+
 enum StoryStep: Hashable {
     case headPhoneCheck
-    
+
     case intro(page: Int)
     
+    case scene(number: Int, phase: ScenePhase)
+    
+    case outro(page: Int)
 }

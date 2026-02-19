@@ -23,8 +23,27 @@ struct MyApp: App {
         }
     }
     
+    /// 모든 StoryStep -> View 라우팅 여기서 관리
     @ViewBuilder
     private func destinationView(for step: StoryStep) -> some View {
-        StoryMessageView(currentStep: step)
+//        StoryMessageView(currentStep: step)
+        switch step {
+        case .headPhoneCheck:
+            HeadPhoneCheckView()
+        case .intro:
+            StoryMessageView(currentStep: step)
+        case .scene(let number, let phase):
+            switch phase {
+            case .dialogue:
+                SceneDialogueView(sceneNumber: number, currentStep: step)
+            case .quiz:
+                EmptyView()
+            case .tts:
+                SceneTTSView(sceneNumber: number, currentStep: step)
+            }
+            
+        case .outro:
+            EmptyView()
+        }
     }
 }

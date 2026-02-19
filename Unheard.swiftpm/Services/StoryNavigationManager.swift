@@ -29,5 +29,3 @@ class StoryNavigationManager {
         path.removeLast(count)
     }
 }
-
-

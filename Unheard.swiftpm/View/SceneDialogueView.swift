@@ -1,0 +1,61 @@
+//
+//  SwiftUIView.swift
+//  Unheard
+//
+//  Created by 이치훈 on 2/16/26.
+//
+
+import SwiftUI
+
+@available(iOS 17.0, *)
+struct SceneDialogueView: View {
+    @State private var showButton = false
+    @Environment(StoryNavigationManager.self) private var navigationManager
+    let sceneNumber: Int
+    let currentStep: StoryStep
+    
+    private var config: SceneConfig {
+        SceneConfig.config(for: sceneNumber)
+    }
+    
+    private var storyInfo: StoryInfo? {
+        StoryData.messages[currentStep]
+    }
+    
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                SceneBackgroundView(background: config.background,
+                                    isBlurred: false,
+                                    showBottomGradient: true)
+                
+                VStack(spacing: 20) {
+                    Spacer()
+                    
+                    if let story = storyInfo {
+                        TypingTextView(text: story.text,
+                                       width: max(0, geo.size.width - (.defaultSpacing * 2)),
+                                       height: max(0, geo.size.height * 0.2),
+                                       alignment: .leading,
+                                       onComplete: { completed in
+                            if completed {
+                                withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
+                                    showButton = true
+                                }
+                            }
+                        })
+                        .padding(.horizontal, .defaultSpacing)
+                        .padding(.bottom, .largeSpacing)
+                        
+                        PageNavigationBar(showPrev: story.showPrevButton,
+                                          showNext: story.showNextButton && showButton,
+                                          prevDestination: { navigationManager.goBack() },
+                                          nextDestination: { navigationManager.navigationTo(step: .scene(number: 1, phase: .tts)) })
+                    }
+                }
+            }
+            .navigationBarBackButtonHidden(true)
+            .ignoresSafeArea()
+        }
+    }
+}

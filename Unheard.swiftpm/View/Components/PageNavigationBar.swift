@@ -48,5 +48,6 @@ struct PageNavigationBar: View {
             }
             .padding(.horizontal, .defaultSpacing)
         }
+        .padding(.bottom, .largeSpacing)
     }
 }

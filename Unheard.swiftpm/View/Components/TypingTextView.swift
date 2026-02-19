@@ -14,6 +14,7 @@ struct TypingTextView: View {
     let typingSpeed: UInt64
     let pauseDelay: UInt64
     let pauseMarker: String
+    let alignment: TextAlignment
     let onComplete: ((Bool) -> Void)?
     
     @State private var displayText: String = ""
@@ -23,8 +24,9 @@ struct TypingTextView: View {
          width: CGFloat,
          height: CGFloat,
          typingSpeed: UInt64 = 20_000_000,
-         pauseDelay: UInt64 = 500_000_000,
+         pauseDelay: UInt64 = 300_000_000,
          pauseMarker: String = "|",
+         alignment: TextAlignment = .center,
          onComplete: ((Bool) -> Void)? = nil) {
         self.text = text
         self.width = width
@@ -32,16 +34,25 @@ struct TypingTextView: View {
         self.typingSpeed = typingSpeed
         self.pauseDelay = pauseDelay
         self.pauseMarker = pauseMarker
+        self.alignment = alignment
         self.onComplete = onComplete
     }
     
+    private var horizontalAlignment: HorizontalAlignment {
+        switch alignment {
+        case .leading: .leading
+        case .center: .center
+        case .trailing: .trailing
+        }
+    }
+    
     var body: some View {
-        ZStack {
+        ZStack(alignment: Alignment(horizontal: horizontalAlignment, vertical: .top)) {
             // 투명한 전체 텍스트로 공간 확보
             Text(text.replacingOccurrences(of: pauseMarker, with: ""))
                 .font(.title)
                 .foregroundStyle(.clear)
-                .multilineTextAlignment(.center)
+                .multilineTextAlignment(alignment)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
             
@@ -50,15 +61,16 @@ struct TypingTextView: View {
                 Text(displayText)
                     .font(.title)
                     .foregroundStyle(.white)
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(alignment)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 
                 Spacer()
             }
         }
-        .frame(width: width,
-               height: height)
+        .frame(width: max(0, width),
+               height: max(0, height),
+               alignment: Alignment(horizontal: horizontalAlignment, vertical: .top))
         .task {
             await typeText()
         }
@@ -89,4 +101,3 @@ struct TypingTextView: View {
         }
     }
 }
-

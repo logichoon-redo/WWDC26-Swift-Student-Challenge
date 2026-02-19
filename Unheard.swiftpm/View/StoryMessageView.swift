@@ -30,7 +30,7 @@ struct StoryMessageView: View {
                                        width: geo.size.width,
                                        height: geo.size.height * 0.3,)
                         
-                        GosanFaceView(expression: story.expression)
+                        CharacterFaceView(character: story.expression)
                         
                         PageNavigationBar(showPrev: story.showPrevButton,
                                           showNext: story.showNextButton,
@@ -44,7 +44,6 @@ struct StoryMessageView: View {
                                 navigationManager.navigationTo(step: nextStep)
                             }
                         })
-                        .padding(.bottom, .largeSpacing)
                     }
                 }
             }
