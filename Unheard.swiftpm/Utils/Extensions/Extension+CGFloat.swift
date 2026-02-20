@@ -16,4 +16,6 @@ extension CGFloat {
     // MARK: FontSize
     static let smallFontSize: CGFloat = 20
     static let defaultFontSize: CGFloat = 40
+    
+    static let defaultCornerRadius: CGFloat = 16
 }

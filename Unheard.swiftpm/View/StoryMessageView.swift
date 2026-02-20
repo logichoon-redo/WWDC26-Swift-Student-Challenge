@@ -40,9 +40,7 @@ struct StoryMessageView: View {
                             navigationManager.goBack()
                         },
                                           nextDestination: {
-                            if let nextStep = story.nextStep {
-                                navigationManager.navigationTo(step: nextStep)
-                            }
+                            navigationManager.navigationTo(step: story.nextStep)
                         })
                     }
                 }

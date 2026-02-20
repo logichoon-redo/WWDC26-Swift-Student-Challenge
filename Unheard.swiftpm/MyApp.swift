@@ -4,6 +4,7 @@ import SwiftUI
 @main
 struct MyApp: App {
     @State private var navigationManager = StoryNavigationManager()
+    @State private var soundManager = SoundManager()
     
     var body: some Scene {
         WindowGroup {
@@ -17,6 +18,7 @@ struct MyApp: App {
                         }
                 }
                 .environment(navigationManager)
+                .environment(soundManager)
                 .navigationBarBackButtonHidden(true)
             }
             .ignoresSafeArea()
@@ -37,7 +39,7 @@ struct MyApp: App {
             case .dialogue:
                 SceneDialogueView(sceneNumber: number, currentStep: step)
             case .quiz:
-                EmptyView()
+                SceneQuizView(sceneNumber: number, currentStep: step, quizType: .grid)
             case .tts:
                 SceneTTSView(sceneNumber: number, currentStep: step)
             }

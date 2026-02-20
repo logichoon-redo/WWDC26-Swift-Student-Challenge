@@ -10,6 +10,7 @@ import SwiftUI
 @available(iOS 17.0, *)
 struct SceneTTSView: View {
     @Environment(StoryNavigationManager.self) private var navigationManager
+    @Environment(SoundManager.self) private var soundManager
     let sceneNumber: Int
     let currentStep: StoryStep
     
@@ -17,6 +18,9 @@ struct SceneTTSView: View {
     
     private var config: SceneConfig {
         SceneConfig.config(for: sceneNumber)
+    }
+    private var storyInfo: StoryInfo? {
+        StoryData.messages[currentStep]
     }
     
     var body: some View {
@@ -27,7 +31,9 @@ struct SceneTTSView: View {
             
             if showCharacter {
                 CharacterFaceView(character: config.npc,
-                                  showGradient: false)
+                                  showGradient: false,
+                                  glowLevel: soundManager.audioLevel)
+                .transition(.opacity)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -36,6 +42,18 @@ struct SceneTTSView: View {
             try? await Task.sleep(for: .seconds(0.5))
             withAnimation(.easeIn(duration: 0.3)) {
                 showCharacter = true
+            }
+            
+            await soundManager.setup()
+            
+            if let story = storyInfo {
+                soundManager.playAmbient(named: "cafe_noise")
+                await soundManager.speak(text: story.text)
+                
+                try? await Task.sleep(for: .seconds(3.5))
+                // TODO: ambient sound stop
+                
+                navigationManager.navigationTo(step: story.nextStep)
             }
         }
     }

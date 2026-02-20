@@ -34,30 +34,50 @@ struct CharacterFaceView: View {
     //    var expression: CharacterExpression
     let character: any CharacterImageProvider
     let showGradient: Bool
+    var glowLevel: Float
     
-    init(character: any CharacterImageProvider, showGradient: Bool = true) {
+    private var glowRadius: CGFloat {
+        CGFloat(glowLevel) * 30
+    }
+    private var glowOpacity: Double {
+        Double(glowLevel) * 0.85
+    }
+    
+    init(character: any CharacterImageProvider, showGradient: Bool = true, glowLevel: Float = 0.0) {
         self.character = character
         self.showGradient = showGradient
+        self.glowLevel = glowLevel
     }
     
     var body: some View {
-        Image(character.imageName)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .clipped()
-            .overlay {
-                if showGradient {
-                    LinearGradient(gradient: Gradient(colors: [
-                        .clear,
-                        .black
-                    ]),
-                                   startPoint: .center,
-                                   endPoint: .bottom)
-                    .frame(width: 190,
-                           height: 200)
+        ZStack {
+            Image(character.imageName)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .colorMultiply(.cyan)   // 원하는 글로우 색상
+                .blur(radius: glowRadius)
+                .opacity(glowOpacity)
+                .clipped()
+            
+            Image(character.imageName)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .clipped()
+                .overlay {
+                    if showGradient {
+                        LinearGradient(gradient: Gradient(colors: [
+                            .clear,
+                            .black
+                        ]),
+                                       startPoint: .center,
+                                       endPoint: .bottom)
+                        .frame(width: 190,
+                               height: 200)
+                    }
                 }
-            }
-            .frame(width: 300,
-                   height: 300)
+            
+        }
+        .frame(width: 300,
+               height: 300)
     }
 }

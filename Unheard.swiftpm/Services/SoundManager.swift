@@ -9,12 +9,15 @@
 import AVFoundation
 import AudioToolbox
 import Accelerate
+import Observation
 
-private struct UncheckedSendable<T>: @unchecked Sendable {
+struct UncheckedSendable<T>: @unchecked Sendable {
     let value: T
 }
 
 // MARK: - 난청 시뮬레이터 (TTS + 환경소음 믹싱)
+@available(iOS 17.0, *)
+@Observable
 final class SoundManager: NSObject, @unchecked Sendable {
     
     // MARK: Audio Engine Components
@@ -53,13 +56,14 @@ final class SoundManager: NSObject, @unchecked Sendable {
     private let eqGains: [Float] = [-10, -25, -40, -55, -65]
     private let blurAmount: Float = 2
     
-    // 믹싱 볼륨
-    var ttsVolume: Float = 1.0 {
-        didSet { ttsPlayerNode.volume = ttsVolume }
-    }
-    var ambientVolume: Float = 0.5 {
-        didSet { ambientPlayerNode.volume = ambientVolume }
-    }
+    // MARK: Observable Properties
+    // didSet 제거 - @Observable과 함께 쓸 때 외부 객체 조작은 별도 메서드로 분리
+    var ttsVolume: Float = 1.0
+    var ambientVolume: Float = 0.5
+    
+    // SwiftUI 바인딩용 오디오 레벨 (0.0 ~ 1.0)
+    // audioLevelHandler 콜백 대신 @Observable 프로퍼티로 직접 관리
+    var audioLevel: Float = 0
     
     // MARK: - Initialization
     override init() {
@@ -73,8 +77,6 @@ final class SoundManager: NSObject, @unchecked Sendable {
         fftSetup = vDSP_create_fftsetup(log2n, FFTRadix(kFFTRadix2))
         
         super.init()
-        
-//        setupAudioGraph()
     }
     
     deinit {
@@ -86,10 +88,29 @@ final class SoundManager: NSObject, @unchecked Sendable {
     
     func setup() async {
         dynamicsProcessor = await createDynamicsProcessor()
-        
         setupAudioGraph()
-        
         print("✅ HearingLossSimulator 초기화 완료")
+    }
+    
+    // MARK: - Volume Control
+    // didSet 대신 명시적 메서드로 분리 - @Observable 환경에서 안전
+    func setTTSVolume(_ volume: Float) {
+        ttsVolume = volume
+        ttsPlayerNode.volume = volume
+    }
+    
+    func setAmbientVolume(_ volume: Float) {
+        ambientVolume = volume
+        ambientPlayerNode.volume = volume
+    }
+    
+    // MARK: - RMS 계산 (오디오 레벨 측정)
+    private func calculateRMS(from buffer: AVAudioPCMBuffer) -> Float {
+        guard let channelData = buffer.floatChannelData else { return 0 }
+        let frameLength = vDSP_Length(buffer.frameLength)
+        var rms: Float = 0
+        vDSP_measqv(channelData[0], 1, &rms, frameLength)
+        return sqrt(rms)
     }
     
     // MARK: Dynamics Processor 생성
@@ -114,7 +135,6 @@ final class SoundManager: NSObject, @unchecked Sendable {
                     self?.configureDynamicsParameters(au)
                 }
                 
-                // ✅ Wrapper로 감싸서 반환
                 if let audioUnit = audioUnit {
                     continuation.resume(returning: UncheckedSendable(value: audioUnit))
                 } else {
@@ -150,10 +170,15 @@ final class SoundManager: NSObject, @unchecked Sendable {
     // MARK: - Audio Graph Setup
     private func setupAudioGraph() {
         /*
-         ✅ Audio Graph 구조 (Dynamics 제거):
+         ✅ Audio Graph 구조:
          
          TTS PlayerNode ──┐
-                          ├──→ Mixer ──→ EQ ──→ [Spectral Blur Tap] ──→ Output
+                          ├──→ Mixer ──→ EQ ──→ [Spectral Blur + RMS Tap] ──→ Output
+         Ambient PlayerNode ─┘
+         
+         Dynamics가 있을 경우:
+         TTS PlayerNode ──┐
+                          ├──→ Mixer ──→ EQ ──→ Dynamics ──→ [Spectral Blur + RMS Tap] ──→ Output
          Ambient PlayerNode ─┘
          */
         
@@ -164,33 +189,43 @@ final class SoundManager: NSObject, @unchecked Sendable {
         
         let format = engine.mainMixerNode.outputFormat(forBus: 0)
         
-        // TTS + Ambient → Mixer → EQ → Output
         engine.connect(ttsPlayerNode, to: mixer, format: format)
         engine.connect(ambientPlayerNode, to: mixer, format: format)
         engine.connect(mixer, to: eq, format: format)
         
         if let dynamics = dynamicsProcessor {
             engine.attach(dynamics)
-
             engine.connect(eq, to: dynamics, format: format)
             engine.connect(dynamics, to: engine.mainMixerNode, format: format)
             
             dynamics.installTap(onBus: 0,
-                                bufferSize: AVAudioFrameCount(fftSize),
-                                format: format) { [weak self] buffer, _ in
+                                 bufferSize: AVAudioFrameCount(fftSize),
+                                 format: format) { [weak self] buffer, _ in
                 self?.applySpectralBlur(to: buffer)
+                
+                let level = self?.calculateRMS(from: buffer) ?? 0
+                let normalized = min(level * 10, 1.0)
+                
+                Task { @MainActor [weak self] in
+                    self?.audioLevel = normalized
+                }
             }
             print("✅ Audio Graph (Dynamics 포함)")
         } else {
             engine.connect(eq, to: engine.mainMixerNode, format: format)
             
-            // Spectral Blur Tap (EQ 출력에 설치)
             eq.installTap(onBus: 0,
                           bufferSize: AVAudioFrameCount(fftSize),
                           format: format) { [weak self] buffer, _ in
                 self?.applySpectralBlur(to: buffer)
+                
+                let level = self?.calculateRMS(from: buffer) ?? 0
+                let normalized = min(level * 10, 1.0)
+                
+                Task { @MainActor [weak self] in
+                    self?.audioLevel = normalized
+                }
             }
-            
             print("⚠️ Audio Graph (Dynamics 없이)")
         }
         
@@ -242,10 +277,8 @@ final class SoundManager: NSObject, @unchecked Sendable {
                         imagp: imagPtr.baseAddress!
                     )
                     
-                    // Forward FFT
                     vDSP_fft_zip(fftSetup, &splitComplex, 1, log2n, FFTDirection(FFT_FORWARD))
                     
-                    // Spectral Smearing
                     tempReal = Array(realPtr)
                     tempImag = Array(imagPtr)
                     
@@ -265,18 +298,15 @@ final class SoundManager: NSObject, @unchecked Sendable {
                         realPtr[i] = sumReal / Float(kernelSize)
                         imagPtr[i] = sumImag / Float(kernelSize)
                         
-                        // 대칭 성분
                         let mirrorIdx = fftSize - i
                         realPtr[mirrorIdx] = realPtr[i]
                         imagPtr[mirrorIdx] = -imagPtr[i]
                     }
                     
-                    // Inverse FFT
                     vDSP_fft_zip(fftSetup, &splitComplex, 1, log2n, FFTDirection(FFT_INVERSE))
                 }
             }
             
-            // ✅ 스케일링 및 결과 복사
             var scale = 1.0 / Float(fftSize)
             realBuffer.withUnsafeMutableBufferPointer { realPtr in
                 vDSP_vsmul(realPtr.baseAddress!, 1, &scale, data, 1, vDSP_Length(processLength))
@@ -289,14 +319,13 @@ final class SoundManager: NSObject, @unchecked Sendable {
     /// TTS 음성 재생
     func speak(text: String, rate: Float = AVSpeechUtteranceDefaultSpeechRate) async {
         ttsBuffers.removeAll()
-        // TODO: 재생 중인 engine 정지 로직 추가
         
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = rate
         
         await withCheckedContinuation { continuation in
-            var hasresumeed = false
+            var hasResumed = false
             
             synthesizer.write(utterance) { [weak self] buffer in
                 guard let self = self,
@@ -305,8 +334,8 @@ final class SoundManager: NSObject, @unchecked Sendable {
                 if pcmBuffer.frameLength > 0 {
                     self.ttsBuffers.append(pcmBuffer)
                 } else {
-                    if !hasresumeed {
-                        hasresumeed = true
+                    if !hasResumed {
+                        hasResumed = true
                         continuation.resume()
                     }
                 }
@@ -318,64 +347,24 @@ final class SoundManager: NSObject, @unchecked Sendable {
     
     /// 환경 소음 재생 (루프)
     func playAmbient(named fileName: String, ext: String = "aac", subdir: String? = nil) {
-        // Helper to get candidate URLs from a bundle
         func urls(in bundle: Bundle, name: String, exts: [String], subdir: String?) -> [URL] {
             exts.compactMap { bundle.url(forResource: name, withExtension: $0, subdirectory: subdir) }
         }
 
-        // Prefer the requested ext, but try common fallbacks as well
         var exts: [String] = []
         if !ext.isEmpty { exts.append(ext) }
-        exts.append(contentsOf: ["aac", "m4a", "mp3", "wav", "caf"]) // fallbacks
+        exts.append(contentsOf: ["aac", "m4a", "mp3", "wav", "caf"])
 
         var candidates: [URL] = []
 
-        // 1) SwiftPM module bundle (if available at runtime)
         #if SWIFT_PACKAGE
         candidates.append(contentsOf: urls(in: Bundle.module, name: fileName, exts: exts, subdir: subdir))
         #endif
-
-        // 2) Bundle for this class (works for app/framework targets)
         candidates.append(contentsOf: urls(in: Bundle(for: SoundManager.self), name: fileName, exts: exts, subdir: subdir))
-
-        // 3) Main bundle (as a last resort if file is copied to app target)
         candidates.append(contentsOf: urls(in: .main, name: fileName, exts: exts, subdir: subdir))
 
         guard let url = candidates.first else {
-            let modulePath: String = {
-                #if SWIFT_PACKAGE
-                return Bundle.module.bundlePath
-                #else
-                return "(no Bundle.module)"
-                #endif
-            }()
-            let classBundle = Bundle(for: SoundManager.self)
-            let classBundlePath = classBundle.bundlePath
-            let mainBundle = Bundle.main
-            let mainPath = mainBundle.bundlePath
-
             print("❌ 환경 소음 파일 없음: \(fileName).\(ext) (subdir: \(subdir ?? "nil"))")
-            print("   - Bundle.module: \(modulePath)")
-            print("   - Class bundle : \(classBundlePath)")
-            print("   - Main bundle  : \(mainPath)")
-
-            // Try to enumerate a subset of resources in each bundle for debugging
-            func listResources(in bundle: Bundle, prefix: String) {
-                if let urls = try? FileManager.default.contentsOfDirectory(at: bundle.bundleURL, includingPropertiesForKeys: nil) {
-                    let resourceLike = urls.filter { $0.pathExtension.lowercased().isEmpty == false }
-                    let sample = resourceLike.prefix(20).map { $0.lastPathComponent }
-                    print("   - \(prefix) contains (sample up to 20): \(sample)")
-                } else {
-                    print("   - \(prefix) resource listing failed")
-                }
-            }
-
-            #if SWIFT_PACKAGE
-            listResources(in: Bundle.module, prefix: "Bundle.module")
-            #endif
-            listResources(in: classBundle, prefix: "Class bundle")
-            listResources(in: mainBundle, prefix: "Main bundle")
-
             return
         }
 
