@@ -47,10 +47,12 @@ struct SceneTTSView: View {
             await soundManager.setup()
             
             if let story = storyInfo {
-                soundManager.playAmbient(named: "cafe_noise")
+                if let audio = config.ambientAudio {
+                    soundManager.playAmbient(named: audio.audioName)
+                }
                 await soundManager.speak(text: story.text)
                 
-                try? await Task.sleep(for: .seconds(3.5))
+                try? await Task.sleep(for: .seconds(0.5))
                 // TODO: ambient sound stop
                 
                 navigationManager.navigationTo(step: story.nextStep)

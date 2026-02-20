@@ -17,8 +17,8 @@ struct PageNavigationBar: View {
     
     init(showPrev: Bool = true,
          showNext: Bool = true,
-         prevText: String = "PREV",
-         nextText: String = "NEXT",
+         prevText: String,
+         nextText: String,
          prevDestination: @escaping () -> Void,
          nextDestination: @escaping () -> Void) {
         self.showPrev = showPrev

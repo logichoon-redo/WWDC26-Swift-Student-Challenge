@@ -64,6 +64,7 @@ final class SoundManager: NSObject, @unchecked Sendable {
     // SwiftUI 바인딩용 오디오 레벨 (0.0 ~ 1.0)
     // audioLevelHandler 콜백 대신 @Observable 프로퍼티로 직접 관리
     var audioLevel: Float = 0
+    var isLoudOnlyMode: Bool = false
     
     // MARK: - Initialization
     override init() {
@@ -317,8 +318,16 @@ final class SoundManager: NSObject, @unchecked Sendable {
     // MARK: - Public API
     
     /// TTS 음성 재생
-    func speak(text: String, rate: Float = AVSpeechUtteranceDefaultSpeechRate) async {
+    func speak(text: String, rate: Float = AVSpeechUtteranceDefaultSpeechRate, loudOnly: Bool = false) async {
         ttsBuffers.removeAll()
+        
+        isLoudOnlyMode = loudOnly
+        
+        if loudOnly {
+            setTTSVolume(5)
+        } else {
+            setTTSVolume(ttsVolume)
+        }
         
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
@@ -343,6 +352,13 @@ final class SoundManager: NSObject, @unchecked Sendable {
         }
         
         playTTS()
+        
+        await waitForTTSCompletion()
+        
+        if loudOnly {
+            setTTSVolume(ttsVolume)
+            isLoudOnlyMode = false
+        }
     }
     
     /// 환경 소음 재생 (루프)
@@ -430,5 +446,22 @@ final class SoundManager: NSObject, @unchecked Sendable {
     func stop() {
         ttsPlayerNode.stop()
         ambientPlayerNode.stop()
+    }
+    
+    private func waitForTTSCompletion() async {
+        await withCheckedContinuation { continuation in
+            var hasResumed = false
+            
+            let silentBuffer = AVAudioPCMBuffer(pcmFormat: engine.mainMixerNode.outputFormat(forBus: 0),
+            frameCapacity: 1)!
+            silentBuffer.frameLength = 1
+            
+            ttsPlayerNode.scheduleBuffer(silentBuffer) {
+                if !hasResumed {
+                    hasResumed = true
+                    continuation.resume()
+                }
+            }
+        }
     }
 }

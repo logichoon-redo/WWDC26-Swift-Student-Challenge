@@ -80,7 +80,7 @@ struct StoryData {
                                    expression: .confused,
                                    nextStep: .scene(number: 1, phase: .dialogue(page: 1)),
                                    nextButtonText: "Experience My World"),
-        // MARK: Scene 1: Coffee Shop
+        // MARK: - Scene 1: Coffee Shop
         .scene(number: 1, phase: .dialogue(page: 1)): StoryInfo(id: "s1_d1",
                                                                 text: """
                                                                 This happened to me last Tuesday.
@@ -90,7 +90,8 @@ struct StoryData {
                                                                 """,
                                                                 expression: .none,
                                                                 nextStep: .scene(number: 1,
-                                                                                 phase: .tts)),
+                                                                                 phase: .tts),
+                                                                nextButtonText: "Listen"),
         .scene(number: 1, phase: .tts): StoryInfo(id: "s1_tts",
                                                   text: """
 I have a grande latte for order fifty!

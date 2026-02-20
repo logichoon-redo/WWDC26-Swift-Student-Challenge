@@ -49,6 +49,8 @@ struct SceneDialogueView: View {
                         
                         PageNavigationBar(showPrev: story.showPrevButton,
                                           showNext: story.showNextButton && showButton,
+                                          prevText: story.prevButtonText,
+                                          nextText: story.nextButtonText,
                                           prevDestination: { navigationManager.goBack() },
                                           nextDestination: {
                             navigationManager.navigationTo(step: story.nextStep)
