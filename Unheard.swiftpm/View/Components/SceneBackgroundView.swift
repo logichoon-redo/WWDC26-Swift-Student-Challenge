@@ -24,7 +24,7 @@ struct SceneBackgroundView: View {
                     .blur(radius: isBlurred ? 5 : 0)
                 
                 if isBlurred {
-                    Color.black.opacity(0.4)
+                    Color.black.opacity(0.6)
                 }
                 
                 // 하단 그라데이션 (텍스트 가독성)

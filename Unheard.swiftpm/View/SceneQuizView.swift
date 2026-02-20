@@ -15,9 +15,13 @@ enum QuizType {
 @available(iOS 17.0, *)
 struct SceneQuizView: View {
     @Environment(StoryNavigationManager.self) private var navigationManager
+    @Environment(SoundManager.self) private var soundManager
     let sceneNumber: Int
     let currentStep: StoryStep
-    let quizType: QuizType
+    
+    private var config: SceneConfig {
+        SceneConfig.config(for: sceneNumber)
+    }
     
     private var quizInfo: QuizInfo? {
         StoryData.quizzes[currentStep]
@@ -44,16 +48,18 @@ struct SceneQuizView: View {
                             .foregroundStyle(.yellow)
                     }
                     
-                    Spacer()
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(width:1, height: 50)
                     
-                    switch quizType {
+                    switch quiz.quizType {
                     case .grid:
                         grideOptions(quiz: quiz)
                     case .stack:
                         stackOptions(quiz: quiz)
                     }
                     
-                    if quiz.audioFile != nil {
+                    if config.ambientAudio != nil {
                         replayButton()
                     }
                     
@@ -120,7 +126,12 @@ struct SceneQuizView: View {
     @ViewBuilder
     private func replayButton() -> some View {
         Button {
-            // TODO: audio replay
+            Task {
+                if let lastStep = StoryData.messages[.scene(number: sceneNumber, phase: .tts)] {
+                    let text = lastStep.text
+                    await soundManager.speak(text: text)
+                }
+            }
         } label: {
             HStack {
                 Image(systemName: "speaker.wave.2.fill")
@@ -130,9 +141,15 @@ struct SceneQuizView: View {
             .font(.body)
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
-            .padding()
+            .padding(.defaultSpacing)
             .background(Color.accentColor)
             .clipShape(RoundedRectangle(cornerRadius: .defaultCornerRadius))
+            .background {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.white)
+                    .blur(radius: CGFloat(soundManager.audioLevel) * 20)
+                    .opacity(Double(soundManager.audioLevel) * 0.6)
+            }
         }
         .padding(.horizontal, .defaultSpacing)
     }

@@ -5,6 +5,7 @@
 //  Created by 이치훈 on 2/15/26.
 //
 
+// MARK: - StoryInfo
 struct StoryInfo {
     let id: String
     let text: String // 대본
@@ -34,6 +35,7 @@ struct StoryInfo {
     }
 }
 
+// MARK: - QuizInfo
 struct QuizInfo {
     let id: String
     let question: String
@@ -42,7 +44,7 @@ struct QuizInfo {
     let correctStep: StoryStep
     let wrongStep: StoryStep
     let hint: String?
-    let audioFile: String?
+    let quizType: QuizType
 }
 
 struct StoryData {
@@ -129,6 +131,6 @@ I have a grande latte for order fifty!
                                                            correctStep: .scene(number: 1, phase: .dialogue(page: 10)),
                                                            wrongStep: .scene(number: 1, phase: .dialogue(page: 11)),
                                                            hint: "Your Number is 50",
-                                                           audioFile: "")
+                                                           quizType: .grid)
     ]
 }

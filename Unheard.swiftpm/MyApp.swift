@@ -28,7 +28,6 @@ struct MyApp: App {
     /// 모든 StoryStep -> View 라우팅 여기서 관리
     @ViewBuilder
     private func destinationView(for step: StoryStep) -> some View {
-//        StoryMessageView(currentStep: step)
         switch step {
         case .headPhoneCheck:
             HeadPhoneCheckView()
@@ -39,7 +38,7 @@ struct MyApp: App {
             case .dialogue:
                 SceneDialogueView(sceneNumber: number, currentStep: step)
             case .quiz:
-                SceneQuizView(sceneNumber: number, currentStep: step, quizType: .grid)
+                SceneQuizView(sceneNumber: number, currentStep: step)
             case .tts:
                 SceneTTSView(sceneNumber: number, currentStep: step)
             }

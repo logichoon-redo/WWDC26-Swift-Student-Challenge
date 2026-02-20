@@ -5,12 +5,11 @@
 //  Created by 이치훈 on 2/19/26.
 //
 
-// MARK: SceneBackGround
+// MARK: - SceneBackGround
 enum SceneBackground {
     case coffeeShop // Scene 1
     case subway // Scene 2
     case meeting // Scene 3
-//    case quiet // Scene 4
     case custom(imageName: String)
     
     var imageName: String {
@@ -23,7 +22,7 @@ enum SceneBackground {
     }
 }
 
-// MARK: NPCCharacter
+// MARK: - NPCCharacter
 enum NPCCharacter: CharacterImageProvider {
     case barista
     case speaker
@@ -42,21 +41,41 @@ enum NPCCharacter: CharacterImageProvider {
     }
 }
 
-// MARK: SceneConfig
+// MARK: - SceneConfig
 struct SceneConfig {
     let background: SceneBackground
     let npc: NPCCharacter
+    let ambientAudio: AmbientAudio?
     
     static func config(for sceneNumber: Int) -> SceneConfig {
         switch sceneNumber {
         case 1: SceneConfig(background: .coffeeShop,
-                            npc: .barista)
+                            npc: .barista,
+                            ambientAudio: .coffeeShop)
         case 2: SceneConfig(background: .subway,
-                            npc: .speaker)
+                            npc: .speaker,
+                            ambientAudio: .subway)
         case 3: SceneConfig(background: .meeting,
-                            npc: .manager)
+                            npc: .manager,
+                            ambientAudio: .meeting)
         default: SceneConfig(background: .coffeeShop,
-                             npc: .none)
+                             npc: .none,
+                             ambientAudio: nil)
+        }
+    }
+}
+
+// MARK: - AmbientAudio
+enum AmbientAudio {
+    case coffeeShop
+    case subway
+    case meeting
+    
+    var audioName: String {
+        switch self {
+        case .coffeeShop: "coffeeShopAmbient"
+        case .subway: "subwayAmbient"
+        case .meeting: "meetingAmbient"
         }
     }
 }

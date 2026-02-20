@@ -31,16 +31,15 @@ enum CharacterExpression: CharacterImageProvider {
 
 struct CharacterFaceView: View {
     
-    //    var expression: CharacterExpression
     let character: any CharacterImageProvider
     let showGradient: Bool
     var glowLevel: Float
     
     private var glowRadius: CGFloat {
-        CGFloat(glowLevel) * 30
+        CGFloat(glowLevel) * 40
     }
     private var glowOpacity: Double {
-        Double(glowLevel) * 0.85
+        Double(glowLevel) * 0.9
     }
     
     init(character: any CharacterImageProvider, showGradient: Bool = true, glowLevel: Float = 0.0) {
@@ -54,7 +53,7 @@ struct CharacterFaceView: View {
             Image(character.imageName)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .colorMultiply(.cyan)   // 원하는 글로우 색상
+                .colorMultiply(.white)   // 글로우 색상
                 .blur(radius: glowRadius)
                 .opacity(glowOpacity)
                 .clipped()
