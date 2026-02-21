@@ -43,17 +43,11 @@ struct SceneTTSView: View {
             withAnimation(.easeIn(duration: 0.3)) {
                 showCharacter = true
             }
-            
-            await soundManager.setup()
-            
+
             if let story = storyInfo {
-                if let audio = config.ambientAudio {
-                    soundManager.playAmbient(named: audio.audioName)
-                }
                 await soundManager.speak(text: story.text)
                 
-                try? await Task.sleep(for: .seconds(0.5))
-                // TODO: ambient sound stop
+                try? await Task.sleep(for: .seconds(1))
                 
                 navigationManager.navigationTo(step: story.nextStep)
             }

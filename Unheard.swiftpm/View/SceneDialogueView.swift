@@ -11,6 +11,7 @@ import SwiftUI
 struct SceneDialogueView: View {
     @State private var showButton = false
     @Environment(StoryNavigationManager.self) private var navigationManager
+    @Environment(SoundManager.self) private var soundManager
     let sceneNumber: Int
     let currentStep: StoryStep
     
@@ -60,6 +61,22 @@ struct SceneDialogueView: View {
             }
             .navigationBarBackButtonHidden(true)
             .ignoresSafeArea()
+            .task {
+                guard let storyInfo else { return }
+                let suffix = String(storyInfo.id.suffix(2))
+                
+                switch suffix {
+                case "d1":
+                    if let audio = config.ambientAudio {
+                        await soundManager.setup()
+                        
+                        soundManager.playAmbient(named: audio.audioName)
+                    }
+                case "ls":
+                    await soundManager.fadeOutAmbient()
+                default: break
+                }
+            }
         }
     }
 }

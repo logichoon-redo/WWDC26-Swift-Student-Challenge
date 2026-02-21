@@ -94,7 +94,7 @@ struct StoryData {
                                                                 nextButtonText: "Listen"),
         .scene(number: 1, phase: .tts): StoryInfo(id: "s1_tts",
                                                   text: """
-I have a grande latte for order fifty!
+I have a grande latte for order 15!
 """,
                                                   expression: .none,
                                                   nextStep: .scene(number: 1,
@@ -108,7 +108,9 @@ I have a grande latte for order fifty!
                                                                      But honestly?
                                                                      |
                                                                      I wasn't sure either.
-                                                                     """, expression: .none, nextStep: .scene(number: 2, phase: .dialogue(page: 1)),
+                                                                     """,
+                                                                 expression: .none,
+                                                                 nextStep: .scene(number: 1, phase: .dialogue(page: 2)),
                                                                  showPrevButton: false,
                                                                  showNextButton: true), // quiz 1 정답
         .scene(number: 1, phase: .dialogue(page: 11)): StoryInfo(id: "s1_wrong",
@@ -120,7 +122,103 @@ I have a grande latte for order fifty!
                                                                      Someone else took my latte.
                                                                      """, nextStep: .scene(number: 1, phase: .quiz(page: 1)),
                                                                  showPrevButton: false,
-                                                                 showNextButton: true) // quiz 1 오답
+                                                                 showNextButton: true), // quiz 1 오답
+        .scene(number: 1, phase: .dialogue(page: 2)): StoryInfo(id: "s1_ls",
+                                                                text:"""
+                                                                    Fifty and fifteen sound almost the same to me.
+                                                                    """,
+                                                                nextStep: .scene(number: 2, phase: .dialogue(page: 1)),
+                                                               showPrevButton: true,
+                                                                showNextButton: true),
+        // MARK: - Scene 2: Subway
+        .scene(number: 2, phase: .dialogue(page: 1)): StoryInfo(id: "s2_d1",
+                                                                text: """
+                                                                    Subway announcements are my nightmare.
+                                                                    |
+                                                                    I was heading to Penn Station.
+                                                                    The announcement played...
+                                                                    """,
+                                                                nextStep: .scene(number: 2, phase: .tts),
+                                                               showPrevButton: false,
+                                                               showNextButton: true,
+                                                               nextButtonText: "Listen"),
+        .scene(number: 2, phase: .tts): StoryInfo(id: "s2_tts",
+                                                  text: "This is 42nd Street.   Transfer is available to the 1, 2, 3 and 7 trains.",
+                                                  nextStep: .scene(number: 2, phase: .quiz(page: 1))),
+        .scene(number: 2, phase: .dialogue(page: 10)): StoryInfo(id: "s2_correct",
+                                                                 text: """
+                                                                     You got it.
+                                                                     But I usually can't.
+                                                                     """,
+                                                                 nextStep: .scene(number: 2, phase: .dialogue(page: 2)),
+                                                                showPrevButton: false,
+                                                                showNextButton: true), // s2 정답
+        .scene(number: 2, phase: .dialogue(page: 11)): StoryInfo(id: "s2_wrong",
+                                                                 text: """
+                                                                     I got off at the wrong station.
+                                                                     I was late for my interview.
+                                                                     |
+                                                                     This has happened more than once.
+                                                                     """,
+                                                                 nextStep: .scene(number: 2, phase: .quiz(page: 1)),
+                                                                showPrevButton: false,
+                                                                showNextButton: true), // s2 오답
+        .scene(number: 2, phase: .dialogue(page: 2)): StoryInfo(id: "s2_ls",
+                                                                text: """
+                                                                    Fourteen, forty, forty-two...
+                                                                    |
+                                                                    They all blur together.
+                                                                    """,
+                                                                nextStep: .scene(number: 3, phase: .dialogue(page: 1)),
+                                                               showPrevButton: true,
+                                                               showNextButton: true),
+        // MARK: Scene 3: Office Meeting
+        .scene(number: 3, phase: .dialogue(page: 1)): StoryInfo(id: "s3_d1",
+                                                                text: """
+                                                                    But the hardest part?
+                                                                    Team meetings.
+                                                                    """,
+                                                                nextStep: .scene(number: 3, phase: .dialogue(page: 2)),
+                                                               showPrevButton: false,
+                                                               showNextButton: true),
+        .scene(number: 3, phase: .dialogue(page: 2)): StoryInfo(id: "s3_d2",
+                                                                text: """
+                                                                    Everyone talks fast.
+                                                                    |
+                                                                    Multiple voices overlap.
+                                                                    And I'm supposed to keep up.
+                                                                    """,
+                                                                nextStep: .scene(number: 3, phase: .tts),
+                                                                nextButtonText: "Listen",
+                                                               ),
+        .scene(number: 3, phase: .tts): StoryInfo(id: "s3_tts",
+                                                  text: "Alright team, let's go over this week's tasks. Gosan, can you fix the dashboard issue before the demo on Friday?",
+                                                  nextStep: .scene(number: 3, phase: .quiz(page: 1))),
+        .scene(number: 3, phase: .dialogue(page: 10)): StoryInfo(id: "s3_correct",
+                                                                 text: """
+                                                                     Correct. But I wasn't sure.
+                                                                     I nodded anyway.
+                                                                     """,
+                                                                 nextStep: .scene(number: 3, phase: .dialogue(page: 3)),
+                                                                showPrevButton: false,
+                                                                showNextButton: true), // s3 정답
+        .scene(number: 3, phase: .dialogue(page: 11)): StoryInfo(id: "s3_wrong",
+                                                                 text: """
+                                                                     That's what I would have guessed too.
+                                                                     I usually ask a coworker later.
+                                                                     Pretending I understood.
+                                                                     """,
+                                                                 nextStep: .scene(number: 3, phase: .quiz(page: 1)),
+                                                                showPrevButton: false,
+                                                                showNextButton: true),
+        .scene(number: 3, phase: .dialogue(page: 3)): StoryInfo(id: "s3_ls",
+                                                                text: """
+                                                                    The worst part isn't mishearing.
+                                                                    |
+                                                                    It's pretending I didn't.
+                                                                    """,
+                                                                nextStep: .outro(page: 1))
+        
     ]
     
     // MARK: - Quiz Data
@@ -128,10 +226,26 @@ I have a grande latte for order fifty!
         .scene(number: 1, phase: .quiz(page: 1)): QuizInfo(id: "s1_q1",
                                                            question: "What was the order number?",
                                                            options: ["50", "55", "15", "51"],
-                                                           correctIndex: 0,
+                                                           correctIndex: 2,
                                                            correctStep: .scene(number: 1, phase: .dialogue(page: 10)),
                                                            wrongStep: .scene(number: 1, phase: .dialogue(page: 11)),
                                                            hint: "Your Number is 50",
-                                                           quizType: .grid)
+                                                           quizType: .grid),
+        .scene(number: 2, phase: .quiz(page: 1)): QuizInfo(id: "s2_q1",
+                                                           question: "Which station was that?",
+                                                           options: ["14th Street", "34th Street", "42nd Street", "52nd Street"],
+                                                           correctIndex: 2,
+                                                           correctStep: .scene(number: 2, phase: .dialogue(page: 10)),
+                                                           wrongStep: .scene(number: 2, phase: .dialogue(page: 11)),
+                                                           hint: nil,
+                                                           quizType: .grid),
+        .scene(number: 3, phase: .quiz(page: 1)): QuizInfo(id: "s3_q1",
+                                                           question: "What task were you assigned?",
+                                                           options: ["Client presentation", "Dashboard issue", "Weekly report", "I couldn't tell"],
+                                                           correctIndex: 1,
+                                                           correctStep: .scene(number: 3, phase: .dialogue(page: 10)),
+                                                           wrongStep: .scene(number: 3, phase: .dialogue(page: 11)),
+                                                           hint: nil,
+                                                           quizType: .stack)
     ]
 }

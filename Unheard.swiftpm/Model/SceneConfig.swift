@@ -15,8 +15,8 @@ enum SceneBackground {
     var imageName: String {
         switch self {
         case .coffeeShop: "coffeeShopBackground"
-        case .subway: "coffeeShopBackground"
-        case .meeting: "coffeeShopBackground"
+        case .subway: "subwayBackground"
+        case .meeting: "officeBackground"
         case .custom(let name): name
         }
     }
@@ -33,8 +33,8 @@ enum NPCCharacter: CharacterImageProvider {
     var imageName: String {
         switch self {
         case .barista: "barista"
-        case .speaker: ""
-        case .manager: ""
+        case .speaker: "speaker"
+        case .manager: "manager"
         case .gosan(let expression): expression.imageName
         case .none: ""
         }
@@ -57,7 +57,7 @@ struct SceneConfig {
                             ambientAudio: .subway)
         case 3: SceneConfig(background: .meeting,
                             npc: .manager,
-                            ambientAudio: .meeting)
+                            ambientAudio: .office)
         default: SceneConfig(background: .coffeeShop,
                              npc: .none,
                              ambientAudio: nil)
@@ -69,13 +69,13 @@ struct SceneConfig {
 enum AmbientAudio {
     case coffeeShop
     case subway
-    case meeting
+    case office
     
     var audioName: String {
         switch self {
         case .coffeeShop: "coffeeShopAmbient"
         case .subway: "subwayAmbient"
-        case .meeting: "meetingAmbient"
+        case .office: "officeAmbient"
         }
     }
 }

@@ -65,6 +65,7 @@ final class SoundManager: NSObject, @unchecked Sendable {
     // audioLevelHandler 콜백 대신 @Observable 프로퍼티로 직접 관리
     var audioLevel: Float = 0
     var isLoudOnlyMode: Bool = false
+    private var isAmbientStopping = false
     
     // MARK: - Initialization
     override init() {
@@ -387,7 +388,8 @@ final class SoundManager: NSObject, @unchecked Sendable {
         do {
             let file = try AVAudioFile(forReading: url)
             ambientPlayerNode.scheduleFile(file, at: nil) { [weak self] in
-                self?.playAmbient(named: fileName, ext: ext, subdir: subdir)
+                guard let self, !self.isAmbientStopping else { return }
+                self.playAmbient(named: fileName, ext: ext, subdir: subdir)
             }
             startEngineIfNeeded()
             ambientPlayerNode.play()
@@ -463,5 +465,27 @@ final class SoundManager: NSObject, @unchecked Sendable {
                 }
             }
         }
+    }
+    
+    /// 앰비언트 사운드를 페이드아웃하며 정지
+    /// - Parameter duration: 페이드아웃 시간 (초, 기본 1.5초)
+    func fadeOutAmbient(duration: Double = 1.5) async {
+        isAmbientStopping = true
+        
+        let steps = 20
+        let interval = duration / Double(steps)
+        let startVolume = ambientPlayerNode.volume
+        
+        for i in 1...steps {
+            let progress = Float(i) / Float(steps)
+            ambientPlayerNode.volume = startVolume * (1.0 - progress)
+            
+            try? await Task.sleep(for: .seconds(interval))
+        }
+        
+        ambientPlayerNode.stop()
+        ambientPlayerNode.reset()
+        ambientPlayerNode.volume = startVolume
+        isAmbientStopping = false
     }
 }
