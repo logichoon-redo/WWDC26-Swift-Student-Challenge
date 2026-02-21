@@ -9,6 +9,7 @@ import SwiftUI
 
 @available(iOS 17.0, *)
 struct StoryMessageView: View {
+    @State private var showButton = false
     @Environment(StoryNavigationManager.self) private var navigationManager
     
     let currentStep: StoryStep
@@ -28,12 +29,19 @@ struct StoryMessageView: View {
                     if let story = storyInfo {
                         TypingTextView(text: story.text,
                                        width: geo.size.width,
-                                       height: geo.size.height * 0.3,)
+                                       height: geo.size.height * 0.3,
+                                       onComplete: { completed in
+                            if completed {
+                                withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
+                                    showButton = true
+                                }
+                            }
+                        })
                         
                         CharacterFaceView(character: story.expression)
                         
                         PageNavigationBar(showPrev: story.showPrevButton,
-                                          showNext: story.showNextButton,
+                                          showNext: story.showNextButton && showButton,
                                           prevText: story.prevButtonText,
                                           nextText: story.nextButtonText,
                                           prevDestination: {

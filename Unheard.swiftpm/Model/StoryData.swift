@@ -128,7 +128,7 @@ I have a grande latte for order 15!
                                                                     Fifty and fifteen sound almost the same to me.
                                                                     """,
                                                                 nextStep: .scene(number: 2, phase: .dialogue(page: 1)),
-                                                               showPrevButton: true,
+                                                                showPrevButton: true,
                                                                 showNextButton: true),
         // MARK: - Scene 2: Subway
         .scene(number: 2, phase: .dialogue(page: 1)): StoryInfo(id: "s2_d1",
@@ -139,9 +139,9 @@ I have a grande latte for order 15!
                                                                     The announcement played...
                                                                     """,
                                                                 nextStep: .scene(number: 2, phase: .tts),
-                                                               showPrevButton: false,
-                                                               showNextButton: true,
-                                                               nextButtonText: "Listen"),
+                                                                showPrevButton: false,
+                                                                showNextButton: true,
+                                                                nextButtonText: "Listen"),
         .scene(number: 2, phase: .tts): StoryInfo(id: "s2_tts",
                                                   text: "This is 42nd Street.   Transfer is available to the 1, 2, 3 and 7 trains.",
                                                   nextStep: .scene(number: 2, phase: .quiz(page: 1))),
@@ -151,8 +151,8 @@ I have a grande latte for order 15!
                                                                      But I usually can't.
                                                                      """,
                                                                  nextStep: .scene(number: 2, phase: .dialogue(page: 2)),
-                                                                showPrevButton: false,
-                                                                showNextButton: true), // s2 정답
+                                                                 showPrevButton: false,
+                                                                 showNextButton: true), // s2 정답
         .scene(number: 2, phase: .dialogue(page: 11)): StoryInfo(id: "s2_wrong",
                                                                  text: """
                                                                      I got off at the wrong station.
@@ -161,8 +161,8 @@ I have a grande latte for order 15!
                                                                      This has happened more than once.
                                                                      """,
                                                                  nextStep: .scene(number: 2, phase: .quiz(page: 1)),
-                                                                showPrevButton: false,
-                                                                showNextButton: true), // s2 오답
+                                                                 showPrevButton: false,
+                                                                 showNextButton: true), // s2 오답
         .scene(number: 2, phase: .dialogue(page: 2)): StoryInfo(id: "s2_ls",
                                                                 text: """
                                                                     Fourteen, forty, forty-two...
@@ -170,8 +170,8 @@ I have a grande latte for order 15!
                                                                     They all blur together.
                                                                     """,
                                                                 nextStep: .scene(number: 3, phase: .dialogue(page: 1)),
-                                                               showPrevButton: true,
-                                                               showNextButton: true),
+                                                                showPrevButton: true,
+                                                                showNextButton: true),
         // MARK: Scene 3: Office Meeting
         .scene(number: 3, phase: .dialogue(page: 1)): StoryInfo(id: "s3_d1",
                                                                 text: """
@@ -179,8 +179,8 @@ I have a grande latte for order 15!
                                                                     Team meetings.
                                                                     """,
                                                                 nextStep: .scene(number: 3, phase: .dialogue(page: 2)),
-                                                               showPrevButton: false,
-                                                               showNextButton: true),
+                                                                showPrevButton: false,
+                                                                showNextButton: true),
         .scene(number: 3, phase: .dialogue(page: 2)): StoryInfo(id: "s3_d2",
                                                                 text: """
                                                                     Everyone talks fast.
@@ -200,8 +200,8 @@ I have a grande latte for order 15!
                                                                      I nodded anyway.
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .dialogue(page: 3)),
-                                                                showPrevButton: false,
-                                                                showNextButton: true), // s3 정답
+                                                                 showPrevButton: false,
+                                                                 showNextButton: true), // s3 정답
         .scene(number: 3, phase: .dialogue(page: 11)): StoryInfo(id: "s3_wrong",
                                                                  text: """
                                                                      That's what I would have guessed too.
@@ -209,8 +209,8 @@ I have a grande latte for order 15!
                                                                      Pretending I understood.
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .quiz(page: 1)),
-                                                                showPrevButton: false,
-                                                                showNextButton: true),
+                                                                 showPrevButton: false,
+                                                                 showNextButton: true),
         .scene(number: 3, phase: .dialogue(page: 3)): StoryInfo(id: "s3_ls",
                                                                 text: """
                                                                     The worst part isn't mishearing.
