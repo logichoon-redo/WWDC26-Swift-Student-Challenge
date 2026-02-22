@@ -22,6 +22,12 @@ struct MyApp: App {
                 .navigationBarBackButtonHidden(true)
             }
             .ignoresSafeArea()
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                soundManager.pauseAmbient()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                soundManager.resumeAmbient()
+            }
         }
     }
     

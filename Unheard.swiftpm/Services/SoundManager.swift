@@ -66,6 +66,7 @@ final class SoundManager: NSObject, @unchecked Sendable {
     var audioLevel: Float = 0
     var isLoudOnlyMode: Bool = false
     private var isAmbientStopping = false
+    private var isSetupDone = false
     
     // MARK: - Initialization
     override init() {
@@ -89,8 +90,11 @@ final class SoundManager: NSObject, @unchecked Sendable {
     }
     
     func setup() async {
+        guard !isSetupDone else { return }
+        
         dynamicsProcessor = await createDynamicsProcessor()
         setupAudioGraph()
+        isSetupDone = true
         print("✅ HearingLossSimulator 초기화 완료")
     }
     
@@ -484,8 +488,17 @@ final class SoundManager: NSObject, @unchecked Sendable {
         }
         
         ambientPlayerNode.stop()
-        ambientPlayerNode.reset()
         ambientPlayerNode.volume = startVolume
         isAmbientStopping = false
+    }
+    
+    func pauseAmbient() {
+        guard engine.isRunning else { return }
+        ambientPlayerNode.pause()
+    }
+    
+    func resumeAmbient() {
+        guard engine.isRunning else { return }
+        ambientPlayerNode.play()
     }
 }
