@@ -32,19 +32,18 @@ struct PageNavigationBar: View {
     var body: some View {
         ZStack {
             HStack {
-                if showPrev {
-                    PageNavigationButton(direction: .prev,
-                                         text: prevText,
-                                         action: prevDestination)
-                }
+                
+                PageNavigationButton(direction: .prev,
+                                     text: prevText,
+                                     action: prevDestination)
                 
                 Spacer()
                 
-                if showNext {
-                    PageNavigationButton(direction: .next,
-                                         text: nextText,
-                                         action: nextDestination)
-                }
+                PageNavigationButton(direction: .next,
+                                     text: nextText,
+                                     action: nextDestination)
+                .opacity(showNext ? 1 : 0.3)
+                .disabled(!showNext)
             }
             .padding(.horizontal, .defaultSpacing)
         }

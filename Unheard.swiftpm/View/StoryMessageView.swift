@@ -56,5 +56,8 @@ struct StoryMessageView: View {
         }
         .navigationBarBackButtonHidden(true)
         .ignoresSafeArea()
+        .onAppear {
+            showButton = false
+        }
     }
 }

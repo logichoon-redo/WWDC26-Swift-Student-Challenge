@@ -61,6 +61,9 @@ struct SceneDialogueView: View {
             }
             .navigationBarBackButtonHidden(true)
             .ignoresSafeArea()
+            .onAppear {
+                showButton = false
+            }
             .task {
                 guard let storyInfo else { return }
                 let suffix = String(storyInfo.id.suffix(2))
