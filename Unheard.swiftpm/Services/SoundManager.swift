@@ -407,6 +407,8 @@ final class SoundManager: NSObject, @unchecked Sendable {
         guard !ttsBuffers.isEmpty else { return }
         
         for buffer in ttsBuffers {
+            guard buffer.frameLength > 0 else { return }
+            
             if let converted = convertBuffer(buffer) {
                 ttsPlayerNode.scheduleBuffer(converted)
             }
@@ -456,17 +458,26 @@ final class SoundManager: NSObject, @unchecked Sendable {
     
     private func waitForTTSCompletion() async {
         await withCheckedContinuation { continuation in
-            var hasResumed = false
+            final class Flag: @unchecked Sendable {
+                var hasResumed = false
+            }
+            let flag = Flag()
             
-            let silentBuffer = AVAudioPCMBuffer(pcmFormat: engine.mainMixerNode.outputFormat(forBus: 0),
-            frameCapacity: 1)!
-            silentBuffer.frameLength = 1
+            let format = engine.mainMixerNode.outputFormat(forBus: 0)
+            let silentBuffer = AVAudioPCMBuffer(pcmFormat: format,
+                                                frameCapacity: 512)!
+            silentBuffer.frameLength = 512
+            
+            if let channelData = silentBuffer.floatChannelData {
+                for ch in 0..<Int(format.channelCount) {
+                    memset(channelData[ch], 0, Int(silentBuffer.frameLength) * MemoryLayout<Float>.size)
+                }
+            }
             
             ttsPlayerNode.scheduleBuffer(silentBuffer) {
-                if !hasResumed {
-                    hasResumed = true
-                    continuation.resume()
-                }
+                guard !flag.hasResumed else { return }
+                flag.hasResumed = true
+                continuation.resume()
             }
         }
     }
@@ -495,10 +506,12 @@ final class SoundManager: NSObject, @unchecked Sendable {
     func pauseAmbient() {
         guard engine.isRunning else { return }
         ambientPlayerNode.pause()
+        ttsPlayerNode.pause()
     }
     
     func resumeAmbient() {
         guard engine.isRunning else { return }
         ambientPlayerNode.play()
+        ttsPlayerNode.play()
     }
 }
