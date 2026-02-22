@@ -26,10 +26,12 @@ final class SoundManager: NSObject, @unchecked Sendable {
     private let ttsPlayerNode = AVAudioPlayerNode()
     private let ambientPlayerNode = AVAudioPlayerNode()
     private let mixer = AVAudioMixerNode()
+    private let effectPlayerNode = AVAudioPlayerNode()
+    private var effectContinuation: CheckedContinuation<Void, Never>?
     
     // Dynamics Processor
     private var dynamicsProcessor: AVAudioUnit?
-
+    
     // Dynamics 설정값
     private let dynamicsThreshold: Float = -30
     private let dynamicsHeadRoom: Float = 5
@@ -67,6 +69,9 @@ final class SoundManager: NSObject, @unchecked Sendable {
     var isLoudOnlyMode: Bool = false
     private var isAmbientStopping = false
     private var isSetupDone = false
+    
+//    private var effectPlayer: AVAudioPlayer?
+//    private var effectCompletion: (() -> Void)?
     
     // MARK: - Initialization
     override init() {
@@ -179,17 +184,18 @@ final class SoundManager: NSObject, @unchecked Sendable {
          ✅ Audio Graph 구조:
          
          TTS PlayerNode ──┐
-                          ├──→ Mixer ──→ EQ ──→ [Spectral Blur + RMS Tap] ──→ Output
+         ├──→ Mixer ──→ EQ ──→ [Spectral Blur + RMS Tap] ──→ Output
          Ambient PlayerNode ─┘
          
          Dynamics가 있을 경우:
          TTS PlayerNode ──┐
-                          ├──→ Mixer ──→ EQ ──→ Dynamics ──→ [Spectral Blur + RMS Tap] ──→ Output
+         ├──→ Mixer ──→ EQ ──→ Dynamics ──→ [Spectral Blur + RMS Tap] ──→ Output
          Ambient PlayerNode ─┘
          */
         
         engine.attach(ttsPlayerNode)
         engine.attach(ambientPlayerNode)
+        engine.attach(effectPlayerNode)
         engine.attach(mixer)
         engine.attach(eq)
         
@@ -197,6 +203,7 @@ final class SoundManager: NSObject, @unchecked Sendable {
         
         engine.connect(ttsPlayerNode, to: mixer, format: format)
         engine.connect(ambientPlayerNode, to: mixer, format: format)
+        engine.connect(effectPlayerNode, to: mixer, format: format)
         engine.connect(mixer, to: eq, format: format)
         
         if let dynamics = dynamicsProcessor {
@@ -205,8 +212,8 @@ final class SoundManager: NSObject, @unchecked Sendable {
             engine.connect(dynamics, to: engine.mainMixerNode, format: format)
             
             dynamics.installTap(onBus: 0,
-                                 bufferSize: AVAudioFrameCount(fftSize),
-                                 format: format) { [weak self] buffer, _ in
+                                bufferSize: AVAudioFrameCount(fftSize),
+                                format: format) { [weak self] buffer, _ in
                 self?.applySpectralBlur(to: buffer)
                 
                 let level = self?.calculateRMS(from: buffer) ?? 0
@@ -371,24 +378,24 @@ final class SoundManager: NSObject, @unchecked Sendable {
         func urls(in bundle: Bundle, name: String, exts: [String], subdir: String?) -> [URL] {
             exts.compactMap { bundle.url(forResource: name, withExtension: $0, subdirectory: subdir) }
         }
-
+        
         var exts: [String] = []
         if !ext.isEmpty { exts.append(ext) }
         exts.append(contentsOf: ["aac", "m4a", "mp3", "wav", "caf"])
-
+        
         var candidates: [URL] = []
-
-        #if SWIFT_PACKAGE
+        
+#if SWIFT_PACKAGE
         candidates.append(contentsOf: urls(in: Bundle.module, name: fileName, exts: exts, subdir: subdir))
-        #endif
+#endif
         candidates.append(contentsOf: urls(in: Bundle(for: SoundManager.self), name: fileName, exts: exts, subdir: subdir))
         candidates.append(contentsOf: urls(in: .main, name: fileName, exts: exts, subdir: subdir))
-
+        
         guard let url = candidates.first else {
             print("❌ 환경 소음 파일 없음: \(fileName).\(ext) (subdir: \(subdir ?? "nil"))")
             return
         }
-
+        
         do {
             let file = try AVAudioFile(forReading: url)
             ambientPlayerNode.scheduleFile(file, at: nil) { [weak self] in
@@ -433,7 +440,7 @@ final class SoundManager: NSObject, @unchecked Sendable {
         let newFrameCount = AVAudioFrameCount(Double(buffer.frameLength) * ratio)
         
         guard let convertedBuffer = AVAudioPCMBuffer(pcmFormat: engineFormat,
-                                                      frameCapacity: newFrameCount) else {
+                                                     frameCapacity: newFrameCount) else {
             return nil
         }
         
@@ -513,5 +520,37 @@ final class SoundManager: NSObject, @unchecked Sendable {
         guard engine.isRunning else { return }
         ambientPlayerNode.play()
         ttsPlayerNode.play()
+    }
+    
+    func playSoundEffect(named name: String, extension ext: String = "aac") async {
+        guard let url = Bundle.main.url(forResource: name, withExtension: ext) else {
+            print("⚠️ SoundEffect not found: \(name).\(ext)")
+            return
+        }
+        
+        do {
+            let file = try AVAudioFile(forReading: url)
+            
+            await withCheckedContinuation { continuation in
+                // ✅ 재생 완료 콜백으로 continuation 재개
+                effectPlayerNode.scheduleFile(file, at: nil) { [weak self] in
+                    self?.effectContinuation?.resume()
+                    self?.effectContinuation = nil
+                }
+                
+                self.effectContinuation = continuation
+                
+                startEngineIfNeeded()
+                effectPlayerNode.play()
+            }
+        } catch {
+            print("⚠️ SoundEffect load error: \(error)")
+        }
+    }
+    
+    func speakWithSigh(text: String) async {
+        await playSoundEffect(named: "sigh")
+        try? await Task.sleep(for: .seconds(1.7))
+        await speak(text: text, loudOnly: true)
     }
 }

@@ -129,7 +129,7 @@ struct SceneQuizView: View {
             Task {
                 if let lastStep = StoryData.messages[.scene(number: sceneNumber, phase: .tts)] {
                     let text = lastStep.text
-                    await soundManager.speak(text: text, loudOnly: true)
+                    await soundManager.speakWithSigh(text: text)
                 }
             }
         } label: {
