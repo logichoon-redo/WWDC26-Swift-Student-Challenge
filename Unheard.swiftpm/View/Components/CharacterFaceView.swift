@@ -56,7 +56,6 @@ struct CharacterFaceView: View {
                 .colorMultiply(.white)   // 글로우 색상
                 .blur(radius: glowRadius)
                 .opacity(glowOpacity)
-                .clipped()
             
             Image(character.imageName)
                 .resizable()
