@@ -11,6 +11,7 @@ import SwiftUI
 @Observable
 class StoryNavigationManager {
     var path = NavigationPath()
+    var replayUsedScenes: Set<Int> = []
     
     func navigationTo(step: StoryStep) {
         path.append(step)

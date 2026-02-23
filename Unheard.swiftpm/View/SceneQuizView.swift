@@ -125,6 +125,7 @@ struct SceneQuizView: View {
     
     @ViewBuilder
     private func replayButton() -> some View {
+        let isUsed = navigationManager.replayUsedScenes.contains(sceneNumber)
         Button {
             if sceneNumber != 2 {
                 Task {
@@ -134,6 +135,7 @@ struct SceneQuizView: View {
                     }
                 }
             } else {
+                navigationManager.replayUsedScenes.insert(sceneNumber)
                 navigationManager.navigationTo(step: .scene(number: 2, phase: .dialogue(page: 12)))
             }
         } label: {
@@ -152,9 +154,12 @@ struct SceneQuizView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color.white)
                     .blur(radius: CGFloat(soundManager.audioLevel) * 20)
+                    .opacity(isUsed ? 0 : 1)
                     .opacity(Double(soundManager.audioLevel) * 0.6)
             }
         }
+        .opacity(isUsed ? 0.3 : 1)
+        .disabled(isUsed)
         .padding(.horizontal, .defaultSpacing)
     }
 }
