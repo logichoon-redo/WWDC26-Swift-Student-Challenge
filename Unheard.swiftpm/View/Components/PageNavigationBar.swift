@@ -36,6 +36,8 @@ struct PageNavigationBar: View {
                 PageNavigationButton(direction: .prev,
                                      text: prevText,
                                      action: prevDestination)
+                .opacity(showPrev ? 1 : 0)
+                .disabled(!showPrev)
                 
                 Spacer()
                 
