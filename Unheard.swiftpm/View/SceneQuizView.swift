@@ -126,11 +126,15 @@ struct SceneQuizView: View {
     @ViewBuilder
     private func replayButton() -> some View {
         Button {
-            Task {
-                if let lastStep = StoryData.messages[.scene(number: sceneNumber, phase: .tts)] {
-                    let text = lastStep.text
-                    await soundManager.speakWithSigh(text: text)
+            if sceneNumber != 2 {
+                Task {
+                    if let lastStep = StoryData.messages[.scene(number: sceneNumber, phase: .tts)] {
+                        let text = lastStep.text
+                        await soundManager.speakWithSigh(text: text)
+                    }
                 }
+            } else {
+                navigationManager.navigationTo(step: .scene(number: 2, phase: .dialogue(page: 12)))
             }
         } label: {
             HStack {

@@ -52,7 +52,14 @@ struct SceneDialogueView: View {
                                           showNext: story.showNextButton && showButton,
                                           prevText: story.prevButtonText,
                                           nextText: story.nextButtonText,
-                                          prevDestination: { navigationManager.goBack() },
+                                          prevDestination: { navigationManager.goBack()
+                            let suffix = String(story.id.suffix(2))
+                            if suffix == "d1" {
+                                Task {
+                                    await soundManager.fadeOutAmbient()
+                                }
+                            }
+                        },
                                           nextDestination: {
                             navigationManager.navigationTo(step: story.nextStep)
                         })

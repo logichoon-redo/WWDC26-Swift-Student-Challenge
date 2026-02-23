@@ -163,6 +163,16 @@ I have a grande latte for order 15!
                                                                  nextStep: .scene(number: 2, phase: .quiz(page: 1)),
                                                                  showPrevButton: false,
                                                                  showNextButton: true), // s2 오답
+        .scene(number: 2, phase: .dialogue(page: 12)): StoryInfo(id: "tts_retry",
+                                                                 text: """
+                                                                     In real life,
+                                                                     subway announcements don't repeat.
+                                                                     |
+                                                                     I just have to guess and hope.
+                                                                     """,
+                                                                 nextStep: .scene(number: 2, phase: .quiz(page: 1)),
+                                                                showPrevButton: false,
+                                                                showNextButton: true), // s2_quiz 다시 듣기 시
         .scene(number: 2, phase: .dialogue(page: 2)): StoryInfo(id: "s2_ls",
                                                                 text: """
                                                                     Fourteen, forty, forty-two...
@@ -172,7 +182,7 @@ I have a grande latte for order 15!
                                                                 nextStep: .scene(number: 3, phase: .dialogue(page: 1)),
                                                                 showPrevButton: true,
                                                                 showNextButton: true),
-        // MARK: Scene 3: Office Meeting
+        // MARK: - Scene 3: Office Meeting
         .scene(number: 3, phase: .dialogue(page: 1)): StoryInfo(id: "s3_d1",
                                                                 text: """
                                                                     But the hardest part?
