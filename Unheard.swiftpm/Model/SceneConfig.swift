@@ -23,6 +23,28 @@ enum SceneBackground {
 }
 
 // MARK: - NPCCharacter
+protocol CharacterImageProvider {
+    var imageName: String { get }
+}
+
+enum CharacterExpression: CharacterImageProvider {
+    case confused /// 물음표 표정
+    case empathetic /// 공감 표정
+    case excited /// 입 벌리며 웃는 표정
+    case happy /// 희미한 미소 표정
+    case none
+    
+    var imageName: String {
+        switch self {
+        case .confused: return "gosan_confused"
+        case .empathetic: return "gosan_empathetic"
+        case .excited: return "gosan_excited"
+        case .happy: return "gosan_happy"
+        case .none: return ""
+        }
+    }
+}
+
 enum NPCCharacter: CharacterImageProvider {
     case barista
     case speaker
