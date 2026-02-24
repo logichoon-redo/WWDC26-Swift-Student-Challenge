@@ -28,10 +28,14 @@ protocol CharacterImageProvider {
 }
 
 enum CharacterExpression: CharacterImageProvider {
-    case confused /// 물음표 표정
-    case empathetic /// 공감 표정
-    case excited /// 입 벌리며 웃는 표정
-    case happy /// 희미한 미소 표정
+    /// 물음표 표정
+    case confused
+    /// 공감 표정
+    case empathetic
+    /// 입 벌리며 웃는 표정
+    case excited
+    /// 희미한 미소 표정
+    case happy
     case none
     
     var imageName: String {

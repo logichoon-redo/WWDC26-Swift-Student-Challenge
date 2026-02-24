@@ -82,7 +82,7 @@ struct SceneDialogueView: View {
                         
                         soundManager.playAmbient(named: audio.audioName)
                     }
-                case "ls":
+                case "ls", "o1", "o2", "o3":
                     await soundManager.fadeOutAmbient()
                 default: break
                 }

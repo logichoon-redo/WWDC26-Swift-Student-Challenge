@@ -40,11 +40,29 @@ struct QuizInfo {
     let id: String
     let question: String
     let options: [String]
-    let correctIndex: Int
-    let correctStep: StoryStep
-    let wrongStep: StoryStep
+    let correctIndices: Set<Int>
+    let correctSteps: [Int: StoryStep]
+    let wrongSteps: [Int: StoryStep]
+    let defaultWrongStep: StoryStep
     let hint: String?
     let quizType: QuizType
+    let showHintButton: Bool = false
+    
+    func nextStep(for selectedIndex: Int) -> StoryStep {
+        if let step = correctSteps[selectedIndex] {
+            return step
+        }
+        
+        if let step = wrongSteps[selectedIndex] {
+            return step
+        }
+        
+        return defaultWrongStep
+    }
+    
+    func isCorrectIndices(selectedIndex: Int) -> Bool {
+        return correctIndices.contains(selectedIndex)
+    }
 }
 
 struct StoryData {
@@ -171,8 +189,8 @@ I have a grande latte for order 15!
                                                                      I just have to guess and hope.
                                                                      """,
                                                                  nextStep: .scene(number: 2, phase: .quiz(page: 1)),
-                                                                showPrevButton: false,
-                                                                showNextButton: true), // s2_quiz 다시 듣기 시
+                                                                 showPrevButton: false,
+                                                                 showNextButton: true), // s2_quiz 다시 듣기 시
         .scene(number: 2, phase: .dialogue(page: 2)): StoryInfo(id: "s2_ls",
                                                                 text: """
                                                                     Fourteen, forty, forty-two...
@@ -227,7 +245,174 @@ I have a grande latte for order 15!
                                                                     |
                                                                     It's pretending I didn't.
                                                                     """,
-                                                                nextStep: .outro(page: 1))
+                                                                nextStep: .intro(page: 4)),
+        // MARK: - Perspective Shift
+        .intro(page: 4): StoryInfo(id: "outro_1",
+                                   text: """
+                                       Now you've heard what I hear.
+                                       """,
+                                   expression: .empathetic,
+                                   nextStep: .intro(page: 5)),
+        .intro(page: 5): StoryInfo(id: "outro_2",
+                                   text: """
+                                       But here's the good news—
+                                       You can make it easier.
+                                       """,
+                                   expression: .happy,
+                                   nextStep: .intro(page: 6)),
+        .intro(page: 6): StoryInfo(id: "outro_3",
+                                   text: """
+                                       For me.
+                                       For the 466 million people like me.
+                                       |
+                                       Let me show you how.
+                                       """,
+                                   expression: .empathetic,
+                                   nextStep: .scene(number: 1, phase: .dialogue(page: 3)),
+                                   nextButtonText: "Continue"),
+        // MARK: - BC 1
+        .scene(number: 1, phase: .dialogue(page: 3)): StoryInfo(id: "bc1_d1",
+                                                                text: """
+                                                                    Now you're the barista.
+                                                                    |
+                                                                    A customer with hearing loss is waiting.
+                                                                    Their order is ready.
+                                                                    """,
+                                                                nextStep: .scene(number: 1, phase: .dialogue(page: 4))),
+        .scene(number: 1, phase: .dialogue(page: 4)): StoryInfo(id: "bc1_d2",
+                                                                text: """
+                                                                    How will you get their attention?
+                                                                    """,
+                                                                nextStep: .scene(number: 1, phase: .quiz(page: 2))),
+        .scene(number: 1, phase: .dialogue(page: 20)): StoryInfo(id: "bc1_co1",
+                                                                 text: """
+                                                                     Perfect.
+                                                                     |
+                                                                     When you face me, I can read your lips.
+                                                                     I can see your expressions.
+                                                                     It helps more than you think.
+                                                                     """,
+                                                                 nextStep: .scene(number: 2, phase: .dialogue(page: 3)),
+                                                                 showPrevButton: false),
+        .scene(number: 1, phase: .dialogue(page: 30)): StoryInfo(id: "bc1_co2",
+                                                                 text: """
+                                                                     Great thinking!
+                                                                     |
+                                                                     Visual cues are incredibly helpful.
+                                                                     A simple gesture can save me from
+                                                                     an awkward moment.
+                                                                     """,
+                                                                 nextStep: .scene(number: 2, phase: .dialogue(page: 3)),
+                                                                 showPrevButton: false),
+        .scene(number: 1, phase: .dialogue(page: 21)): StoryInfo(id: "bc1_wr1",
+                                                                 text: """
+                                                                     OUCH.
+                                                                     |
+                                                                     Louder doesn't mean clearer.
+                                                                     For me, loud sounds are painful—
+                                                                     but still unclear.
+                                                                     """,
+                                                                 nextStep: .scene(number: 1, phase: .quiz(page: 2)),
+                                                                 showPrevButton: false),
+        .scene(number: 1, phase: .dialogue(page: 31)): StoryInfo(id: "bc1_wr2",
+                                                                 text: """
+                                                                     I might never notice.
+                                                                     |
+                                                                     And I'd go home wondering
+                                                                     what happened to my order.
+                                                                     |
+                                                                     A small gesture goes a long way.
+                                                                     """,
+                                                                 nextStep: .scene(number: 1, phase: .quiz(page: 2)),
+                                                                 showPrevButton: false),
+        .scene(number: 2, phase: .dialogue(page: 3)): StoryInfo(id: "bc2_d1",
+                                                                text: """
+                                                                    You just rode the subway with Gosan.
+                                                                    |
+                                                                    Now you're in charge.
+                                                                    You're redesigning this subway system.
+                                                                    """,
+                                                                nextStep: .scene(number: 2, phase: .dialogue(page: 4)),
+                                                                showPrevButton: false),
+        .scene(number: 2, phase: .dialogue(page: 4)): StoryInfo(id: "bc2_d2",
+                                                                text: """
+                                                                    Which feature would help
+                                                                    passengers like him the most?
+                                                                    |
+                                                                    How would you help?
+                                                                    """,
+                                                                nextStep: .scene(number: 2, phase: .quiz(page: 2))),
+        .scene(number: 2, phase: .dialogue(page: 20)): StoryInfo(id: "bc2_co1",
+                                                                 text: """
+                                                                     I don't have to hear it.
+                                                                     I can just look up and know.
+                                                                     |
+                                                                     This is what good design feels like.
+                                                                     """,
+                                                                 nextStep: .scene(number: 3, phase: .dialogue(page: 4)),
+                                                                 showPrevButton: false),
+        .scene(number: 2, phase: .dialogue(page: 30)): StoryInfo(id: "bc2_co2",
+                                                                 text: """
+                                                                     Now I can read what I can't hear.
+                                                                     Delays. Alerts. Everything.
+                                                                     """,
+                                                                 nextStep: .scene(number: 3, phase: .dialogue(page: 4)),
+                                                                 showPrevButton: false),
+        .scene(number: 2, phase: .dialogue(page: 40)): StoryInfo(id: "bc2_co3",
+                                                                 text: """
+                                                                     Not heard. Felt.
+                                                                     A simple flash—I never miss the doors.
+                                                                     |
+                                                                     Design doesn't always need sound.
+                                                                     """,
+                                                                 nextStep: .scene(number: 3, phase: .dialogue(page: 4)),
+                                                                 showPrevButton: false),
+        .scene(number: 2, phase: .dialogue(page: 21)): StoryInfo(id: "bc2_wr1",
+                                                                 text: """
+                                                                     Louder doesn't mean clearer.
+                                                                     Volume was never the problem.
+                                                                     """,
+                                                                 nextStep: .scene(number: 2, phase: .quiz(page: 2)),
+                                                                 showPrevButton: false),
+        .scene(number: 3, phase: .dialogue(page: 4)): StoryInfo(id: "bc3_d1",
+                                                                text: """
+                                                                    You're in a team meeting.
+                                                                    Your colleague with hearing loss looks lost.
+                                                                    |
+                                                                    The meeting just ended.
+                                                                    What will you do?
+                                                                    """,
+                                                                nextStep: .scene(number: 3, phase: .quiz(page: 2))),
+        .scene(number: 3, phase: .dialogue(page: 20)): StoryInfo(id: "bc3_co1",
+                                                                 text: """
+                                                                     This helps more than you know.
+                                                                     I can review what I missed—without asking.
+                                                                     """,
+                                                                 nextStep: .headPhoneCheck,
+                                                                showPrevButton: false),
+        .scene(number: 3, phase: .dialogue(page: 30)): StoryInfo(id: "bc3_co2",
+                                                                 text: """
+                                                                     Perfect.
+                                                                     |
+                                                                     I can read it at my own pace.
+                                                                     You just made my day easier.
+                                                                     """,
+                                                                 nextStep: .headPhoneCheck,
+                                                                showPrevButton: false),
+        .scene(number: 3, phase: .dialogue(page: 21)): StoryInfo(id: "bc3_wr1",
+                                                                 text: """
+                                                                     I probably didn't understand.
+                                                                     But I won't ask—I don't want to seem incompetent.
+                                                                     """,
+                                                                 nextStep: .scene(number: 3, phase: .quiz(page: 2)),
+                                                                showPrevButton: false),
+        .scene(number: 3, phase: .dialogue(page: 31)): StoryInfo(id: "bc3_wr2",
+                                                                 text: """
+                                                                     Now everyone's staring at me.
+                                                                     A private message would've been better.
+                                                                     """,
+                                                                 nextStep: .scene(number: 3, phase: .quiz(page: 2)),
+                                                                showPrevButton: false)
         
     ]
     
@@ -235,26 +420,100 @@ I have a grande latte for order 15!
     static let quizzes: [StoryStep: QuizInfo] = [
         .scene(number: 1, phase: .quiz(page: 1)): QuizInfo(id: "s1_q1",
                                                            question: "What was the order number?",
-                                                           options: ["50", "55", "15", "51"],
-                                                           correctIndex: 2,
-                                                           correctStep: .scene(number: 1, phase: .dialogue(page: 10)),
-                                                           wrongStep: .scene(number: 1, phase: .dialogue(page: 11)),
+                                                           options: [
+                                                            "50", "55", "15", "51"
+                                                           ],
+                                                           correctIndices: [2],
+                                                           correctSteps: [ 2: .scene(number: 1, phase: .dialogue(page: 10))
+                                                                         ],
+                                                           wrongSteps: [:],
+                                                           defaultWrongStep: .scene(number: 1, phase: .dialogue(page: 11)),
                                                            hint: "Your Number is 50",
                                                            quizType: .grid),
         .scene(number: 2, phase: .quiz(page: 1)): QuizInfo(id: "s2_q1",
                                                            question: "Which station was that?",
-                                                           options: ["14th Street", "34th Street", "42nd Street", "52nd Street"],
-                                                           correctIndex: 2,
-                                                           correctStep: .scene(number: 2, phase: .dialogue(page: 10)),
-                                                           wrongStep: .scene(number: 2, phase: .dialogue(page: 11)),
+                                                           options: [
+                                                            "14th Street",
+                                                            "34th Street",
+                                                            "42nd Street",
+                                                            "52nd Street"
+                                                           ],
+                                                           correctIndices: [2],
+                                                           correctSteps: [
+                                                            2: .scene(number: 2, phase: .dialogue(page: 10))
+                                                           ],
+                                                           wrongSteps: [:],
+                                                           defaultWrongStep: .scene(number: 2, phase: .dialogue(page: 11)),
                                                            hint: nil,
                                                            quizType: .grid),
         .scene(number: 3, phase: .quiz(page: 1)): QuizInfo(id: "s3_q1",
                                                            question: "What task were you assigned?",
-                                                           options: ["Client presentation", "Dashboard issue", "Weekly report", "I couldn't tell"],
-                                                           correctIndex: 1,
-                                                           correctStep: .scene(number: 3, phase: .dialogue(page: 10)),
-                                                           wrongStep: .scene(number: 3, phase: .dialogue(page: 11)),
+                                                           options: [
+                                                            "Client presentation",
+                                                            "Dashboard issue",
+                                                            "Weekly report",
+                                                            "I couldn't tell"
+                                                           ],
+                                                           correctIndices: [1],
+                                                           correctSteps: [ 1: .scene(number: 3, phase: .dialogue(page: 10))
+                                                                         ],
+                                                           wrongSteps: [:],
+                                                           defaultWrongStep: .scene(number: 3, phase: .dialogue(page: 11)),
+                                                           hint: nil,
+                                                           quizType: .stack),
+        .scene(number: 1, phase: .quiz(page: 2)): QuizInfo(id: "bc1_q2",
+                                                           question: "How would you help?", options: [
+                                                            "Shout louder",
+                                                            "Walk up and wave",
+                                                            "Hold up the cup",
+                                                            "Just wait"
+                                                           ], correctIndices: [1, 2], correctSteps: [
+                                                            1: .scene(number: 1, phase: .dialogue(page: 20)),
+                                                            2: .scene(number: 1, phase: .dialogue(page: 30))
+                                                           ],
+                                                           wrongSteps:[
+                                                            0: .scene(number: 1, phase: .dialogue(page: 21)),
+                                                            3: .scene(number: 1, phase: .dialogue(page: 31))
+                                                           ],
+                                                           defaultWrongStep: .scene(number: 1, phase: .dialogue(page: 4)),
+                                                           hint: nil,
+                                                           quizType: .stack),
+        .scene(number: 2, phase: .quiz(page: 2)): QuizInfo(id: "bc2_q2",
+                                                           question: "How would you help?",
+                                                           options: [
+                                                            "Make the announcements louder",
+                                                            "Display station name on screen",
+                                                            "Add real-time captions",
+                                                            "Flash lights when doors close"
+                                                           ],
+                                                           correctIndices: [1, 2, 3],
+                                                           correctSteps: [
+                                                            1: .scene(number: 2, phase: .dialogue(page: 20)),
+                                                            2: .scene(number: 2, phase: .dialogue(page: 30)),
+                                                            3: .scene(number: 2, phase: .dialogue(page: 40))
+                                                           ],
+                                                           wrongSteps: [:],
+                                                           defaultWrongStep: .scene(number: 2, phase: .dialogue(page: 21)),
+                                                           hint: nil,
+                                                           quizType: .stack),
+        .scene(number: 3, phase: .quiz(page: 2)): QuizInfo(id: "bc3_q2",
+                                                           question: "What will you do?",
+                                                           options: [
+                                                            "Assume they understood",
+                                                            "Share your notes",
+                                                            "Repeat loudly",
+                                                            "Summarize in a message"
+                                                           ],
+                                                           correctIndices: [1, 3],
+                                                           correctSteps: [
+                                                            1: .scene(number: 3, phase: .dialogue(page: 20)),
+                                                            3: .scene(number: 3, phase: .dialogue(page: 30))
+                                                           ],
+                                                           wrongSteps: [
+                                                            0: .scene(number: 3, phase: .dialogue(page: 21)),
+                                                            2: .scene(number: 3, phase: .dialogue(page: 31))
+                                                           ],
+                                                           defaultWrongStep: .scene(number: 3, phase: .dialogue(page: 21)),
                                                            hint: nil,
                                                            quizType: .stack)
     ]

@@ -59,8 +59,12 @@ struct SceneQuizView: View {
                         stackOptions(quiz: quiz)
                     }
                     
-                    if config.ambientAudio != nil {
-                        replayButton()
+                    if quiz.correctIndices.count > 1 {
+                        
+                    } else {
+                        if config.ambientAudio != nil {
+                            replayButton()
+                        }
                     }
                     
                     Spacer()
@@ -106,11 +110,8 @@ struct SceneQuizView: View {
     @ViewBuilder
     private func optionButton(text: String, index: Int, quiz: QuizInfo) -> some View {
         Button {
-            if index == quiz.correctIndex {
-                navigationManager.navigationTo(step: quiz.correctStep)
-            } else {
-                navigationManager.navigationTo(step: quiz.wrongStep)
-            }
+            let nextStep = quiz.nextStep(for: index)
+            navigationManager.navigationTo(step: nextStep)
         } label: {
             Text(text)
                 .font(.title2)
