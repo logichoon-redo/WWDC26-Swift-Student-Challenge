@@ -84,9 +84,9 @@ struct SceneConfig {
         case 3: SceneConfig(background: .meeting,
                             npc: .manager,
                             ambientAudio: .office)
-        default: SceneConfig(background: .coffeeShop,
+        default: SceneConfig(background: .custom(imageName: ""),
                              npc: .none,
-                             ambientAudio: nil)
+                             ambientAudio: .calm)
         }
     }
 }
@@ -96,12 +96,14 @@ enum AmbientAudio {
     case coffeeShop
     case subway
     case office
+    case calm
     
     var audioName: String {
         switch self {
         case .coffeeShop: "coffeeShopAmbient"
         case .subway: "subwayAmbient"
         case .office: "officeAmbient"
+        case .calm: "calmAmbient"
         }
     }
 }

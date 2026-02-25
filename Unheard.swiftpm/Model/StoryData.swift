@@ -87,8 +87,7 @@ struct StoryData {
                                    text: """
             I also have mild hearing loss.
             |
-            Most people don't notice.
-            But I struggle every single day.
+            Most people don't notice.           But I struggle every single day.
             """,
                                    expression: .empathetic,
                                    nextStep: .intro(page: 3)),
@@ -436,7 +435,6 @@ I have a grande latte for order 15!
                                        — Gosan
                                        """,
                                    expression: .empathetic)
-        
     ]
     
     // MARK: - Quiz Data

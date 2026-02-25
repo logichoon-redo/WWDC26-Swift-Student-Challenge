@@ -11,6 +11,7 @@ import SwiftUI
 struct StoryMessageView: View {
     @State private var showButton = false
     @Environment(StoryNavigationManager.self) private var navigationManager
+    @Environment(SoundManager.self) private var soundManager
     
     let currentStep: StoryStep
     
@@ -49,6 +50,11 @@ struct StoryMessageView: View {
                         },
                                           nextDestination: {
                             navigationManager.navigationTo(step: story.nextStep)
+                            if story.nextStep == .scene(number: 1, phase: .dialogue(page: 1)) {
+                                Task {
+                                    await soundManager.fadeOutAmbient()
+                                }
+                            }
                         })
                     }
                 }
@@ -58,6 +64,13 @@ struct StoryMessageView: View {
         .ignoresSafeArea()
         .onAppear {
             showButton = false
+            if currentStep == .intro(page: 1) || currentStep == .intro(page: 7) {
+                Task {
+                    await soundManager.setup()
+                    
+                    soundManager.playAmbient(named: "calmAmbient", ext: "mp3")
+                }
+            }
         }
     }
 }
