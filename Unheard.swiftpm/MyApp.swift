@@ -50,7 +50,8 @@ struct MyApp: App {
             }
             
         case .outro:
-            EmptyView()
+//            StoryMessageView(currentStep: step)
+            OutroDialogueView(currentStep: step)
         }
     }
 }

@@ -69,6 +69,7 @@ struct StoryData {
     
     // MARK: - Message Data
     static let messages: [StoryStep: StoryInfo] = [
+        // MARK: - Intro
         .intro(page: 1): StoryInfo(id: "intro_1",
                                    text: """
         Hi, I'm Gosan ⛰️.
@@ -325,6 +326,7 @@ I have a grande latte for order 15!
                                                                      """,
                                                                  nextStep: .scene(number: 1, phase: .quiz(page: 2)),
                                                                  showPrevButton: false),
+        // MARK: - BC 2
         .scene(number: 2, phase: .dialogue(page: 3)): StoryInfo(id: "bc2_d1",
                                                                 text: """
                                                                     You just rode the subway with Gosan.
@@ -374,6 +376,7 @@ I have a grande latte for order 15!
                                                                      """,
                                                                  nextStep: .scene(number: 2, phase: .quiz(page: 2)),
                                                                  showPrevButton: false),
+        // MARK: - BC 3
         .scene(number: 3, phase: .dialogue(page: 4)): StoryInfo(id: "bc3_d1",
                                                                 text: """
                                                                     You're in a team meeting.
@@ -388,7 +391,7 @@ I have a grande latte for order 15!
                                                                      This helps more than you know.
                                                                      I can review what I missed—without asking.
                                                                      """,
-                                                                 nextStep: .headPhoneCheck,
+                                                                 nextStep: .intro(page: 7),
                                                                 showPrevButton: false),
         .scene(number: 3, phase: .dialogue(page: 30)): StoryInfo(id: "bc3_co2",
                                                                  text: """
@@ -397,7 +400,7 @@ I have a grande latte for order 15!
                                                                      I can read it at my own pace.
                                                                      You just made my day easier.
                                                                      """,
-                                                                 nextStep: .headPhoneCheck,
+                                                                 nextStep: .intro(page: 7),
                                                                 showPrevButton: false),
         .scene(number: 3, phase: .dialogue(page: 21)): StoryInfo(id: "bc3_wr1",
                                                                  text: """
@@ -412,7 +415,27 @@ I have a grande latte for order 15!
                                                                      A private message would've been better.
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .quiz(page: 2)),
-                                                                showPrevButton: false)
+                                                                showPrevButton: false),
+        // MARK: - Outro
+        .intro(page: 7): StoryInfo(id: "outro_1",
+                                   text: """
+                                       466 million people have hearing loss.
+                                       |
+                                       You probably know someone.
+                                       Maybe you didn't realize.
+                                       """,
+                                   expression: .empathetic,
+                                  nextStep: .outro(page: 1),
+                                  showPrevButton: false),
+        .outro(page: 1): StoryInfo(id: "outro_2",
+                                   text: """
+                                       A little patience changes everything.
+                                       |
+                                       Thank you for listening.
+                                       |
+                                       — Gosan
+                                       """,
+                                   expression: .empathetic)
         
     ]
     
