@@ -12,6 +12,7 @@ struct CharacterFaceView: View {
     let character: any CharacterImageProvider
     let showGradient: Bool
     var glowLevel: Float
+    let size: CGFloat
     
     private var glowRadius: CGFloat {
         CGFloat(glowLevel) * 40
@@ -20,8 +21,12 @@ struct CharacterFaceView: View {
         Double(glowLevel) * 0.9
     }
     
-    init(character: any CharacterImageProvider, showGradient: Bool = true, glowLevel: Float = 0.0) {
+    init(character: any CharacterImageProvider,
+         size: CGFloat = 300,
+         showGradient: Bool = true,
+         glowLevel: Float = 0.0) {
         self.character = character
+        self.size = size
         self.showGradient = showGradient
         self.glowLevel = glowLevel
     }
@@ -47,13 +52,13 @@ struct CharacterFaceView: View {
                         ]),
                                        startPoint: .center,
                                        endPoint: .bottom)
-                        .frame(width: 190,
-                               height: 200)
+                        .frame(width: size * 0.635,
+                               height: size * 0.665)
                     }
                 }
             
         }
-        .frame(width: 300,
-               height: 300)
+        .frame(width: size,
+               height: size)
     }
 }

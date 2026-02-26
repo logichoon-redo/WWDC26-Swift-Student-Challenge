@@ -48,7 +48,7 @@ struct SceneQuizView: View {
                     if let hint = quiz.hint {
                         Text("💡 Hint: \(hint)")
                             .font(.subheadline)
-                            .foregroundStyle(.yellow)
+                            .foregroundStyle(.yellow.opacity(0.8))
                     }
                     
                     Rectangle()
@@ -174,7 +174,8 @@ struct SceneQuizView: View {
                 showHintSheet = true
             } label: {
                 VStack {
-                    CharacterFaceView(character: CharacterExpression.confused)
+                    CharacterFaceView(character: CharacterExpression.confused,
+                    size: 150)
                     
                     Text("💡 Need a hint?")
                         .font(.subheadline)
