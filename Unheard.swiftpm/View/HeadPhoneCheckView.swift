@@ -38,7 +38,7 @@ headphones 🎧.
                         }
                         
                         Button("Continue") {
-                            navigationManager.navigationTo(step: .intro(page: 1))
+                            navigationManager.navigationTo(step: .intro(page: 4))
                             // TODO: intro(page: 1)으로 되돌려 놓기. (테스트를 위해 page 4로 둠)
                         }
                         .buttonStyle(.bordered)
@@ -49,4 +49,5 @@ headphones 🎧.
             }
         }
     }
+
 }

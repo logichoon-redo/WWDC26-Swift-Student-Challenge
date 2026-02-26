@@ -46,7 +46,7 @@ struct QuizInfo {
     let defaultWrongStep: StoryStep
     let hint: String?
     let quizType: QuizType
-    let showHintButton: Bool = false
+    let hintCards: (title: String, cards: [HintCard])?
     
     func nextStep(for selectedIndex: Int) -> StoryStep {
         if let step = correctSteps[selectedIndex] {
@@ -391,7 +391,7 @@ I have a grande latte for order 15!
                                                                      I can review what I missed—without asking.
                                                                      """,
                                                                  nextStep: .intro(page: 7),
-                                                                showPrevButton: false),
+                                                                 showPrevButton: false),
         .scene(number: 3, phase: .dialogue(page: 30)): StoryInfo(id: "bc3_co2",
                                                                  text: """
                                                                      Perfect.
@@ -400,21 +400,21 @@ I have a grande latte for order 15!
                                                                      You just made my day easier.
                                                                      """,
                                                                  nextStep: .intro(page: 7),
-                                                                showPrevButton: false),
+                                                                 showPrevButton: false),
         .scene(number: 3, phase: .dialogue(page: 21)): StoryInfo(id: "bc3_wr1",
                                                                  text: """
                                                                      I probably didn't understand.
                                                                      But I won't ask—I don't want to seem incompetent.
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .quiz(page: 2)),
-                                                                showPrevButton: false),
+                                                                 showPrevButton: false),
         .scene(number: 3, phase: .dialogue(page: 31)): StoryInfo(id: "bc3_wr2",
                                                                  text: """
                                                                      Now everyone's staring at me.
                                                                      A private message would've been better.
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .quiz(page: 2)),
-                                                                showPrevButton: false),
+                                                                 showPrevButton: false),
         // MARK: - Outro
         .intro(page: 7): StoryInfo(id: "outro_1",
                                    text: """
@@ -424,8 +424,8 @@ I have a grande latte for order 15!
                                        Maybe you didn't realize.
                                        """,
                                    expression: .empathetic,
-                                  nextStep: .outro(page: 1),
-                                  showPrevButton: false),
+                                   nextStep: .outro(page: 1),
+                                   showPrevButton: false),
         .outro(page: 1): StoryInfo(id: "outro_2",
                                    text: """
                                        A little patience changes everything.
@@ -450,7 +450,8 @@ I have a grande latte for order 15!
                                                            wrongSteps: [:],
                                                            defaultWrongStep: .scene(number: 1, phase: .dialogue(page: 11)),
                                                            hint: "Your Number is 50",
-                                                           quizType: .grid),
+                                                           quizType: .grid,
+                                                           hintCards: nil),
         .scene(number: 2, phase: .quiz(page: 1)): QuizInfo(id: "s2_q1",
                                                            question: "Which station was that?",
                                                            options: [
@@ -466,7 +467,8 @@ I have a grande latte for order 15!
                                                            wrongSteps: [:],
                                                            defaultWrongStep: .scene(number: 2, phase: .dialogue(page: 11)),
                                                            hint: nil,
-                                                           quizType: .grid),
+                                                           quizType: .grid,
+                                                           hintCards: nil),
         .scene(number: 3, phase: .quiz(page: 1)): QuizInfo(id: "s3_q1",
                                                            question: "What task were you assigned?",
                                                            options: [
@@ -481,7 +483,9 @@ I have a grande latte for order 15!
                                                            wrongSteps: [:],
                                                            defaultWrongStep: .scene(number: 3, phase: .dialogue(page: 11)),
                                                            hint: nil,
-                                                           quizType: .stack),
+                                                           quizType: .stack,
+                                                           hintCards: nil),
+        // MARK: - BC Quiz
         .scene(number: 1, phase: .quiz(page: 2)): QuizInfo(id: "bc1_q2",
                                                            question: "How would you help?", options: [
                                                             "Shout louder",
@@ -498,7 +502,8 @@ I have a grande latte for order 15!
                                                            ],
                                                            defaultWrongStep: .scene(number: 1, phase: .dialogue(page: 4)),
                                                            hint: nil,
-                                                           quizType: .stack),
+                                                           quizType: .stack,
+                                                           hintCards: HintCardData.coffeShop),
         .scene(number: 2, phase: .quiz(page: 2)): QuizInfo(id: "bc2_q2",
                                                            question: "How would you help?",
                                                            options: [
@@ -516,7 +521,8 @@ I have a grande latte for order 15!
                                                            wrongSteps: [:],
                                                            defaultWrongStep: .scene(number: 2, phase: .dialogue(page: 21)),
                                                            hint: nil,
-                                                           quizType: .stack),
+                                                           quizType: .stack,
+                                                           hintCards: HintCardData.subway),
         .scene(number: 3, phase: .quiz(page: 2)): QuizInfo(id: "bc3_q2",
                                                            question: "What will you do?",
                                                            options: [
@@ -536,6 +542,7 @@ I have a grande latte for order 15!
                                                            ],
                                                            defaultWrongStep: .scene(number: 3, phase: .dialogue(page: 21)),
                                                            hint: nil,
-                                                           quizType: .stack)
+                                                           quizType: .stack,
+                                                           hintCards: HintCardData.meeting)
     ]
 }

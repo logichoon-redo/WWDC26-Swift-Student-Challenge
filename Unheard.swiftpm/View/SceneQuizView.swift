@@ -16,6 +16,9 @@ enum QuizType {
 struct SceneQuizView: View {
     @Environment(StoryNavigationManager.self) private var navigationManager
     @Environment(SoundManager.self) private var soundManager
+    
+    @State private var showHintSheet = false
+    
     let sceneNumber: Int
     let currentStep: StoryStep
     
@@ -59,8 +62,8 @@ struct SceneQuizView: View {
                         stackOptions(quiz: quiz)
                     }
                     
-                    if quiz.correctIndices.count > 1 {
-                        
+                    if quiz.id.hasPrefix("bc") {
+                        hintButton(quiz: quiz)
                     } else {
                         if config.ambientAudio != nil {
                             replayButton()
@@ -163,4 +166,26 @@ struct SceneQuizView: View {
         .disabled(isUsed)
         .padding(.horizontal, .defaultSpacing)
     }
+    
+    @ViewBuilder
+    private func hintButton(quiz: QuizInfo) -> some View {
+        if let hintCards = quiz.hintCards {
+            Button {
+                showHintSheet = true
+            } label: {
+                VStack {
+                    CharacterFaceView(character: CharacterExpression.confused)
+                    
+                    Text("💡 Need a hint?")
+                        .font(.subheadline)
+                        .foregroundStyle(.yellow.opacity(0.8))
+                }
+            }
+            .sheet(isPresented: $showHintSheet) {
+                WaysToHelpSheet(title: hintCards.title,
+                                cards: hintCards.cards)
+            }
+        }
+    }
 }
+
