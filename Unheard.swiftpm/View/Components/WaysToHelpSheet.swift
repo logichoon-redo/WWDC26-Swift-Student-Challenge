@@ -45,7 +45,7 @@ struct WaysToHelpSheet: View {
                     Button {
                         dismiss()
                     } label: {
-                        Text("Got it")
+                        Text("Got it!")
                             .font(.body)
                             .fontWeight(.semibold)
                             .foregroundStyle(.white)

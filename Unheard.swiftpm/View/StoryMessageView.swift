@@ -51,7 +51,7 @@ struct StoryMessageView: View {
                                           nextDestination: {
                             if story.nextStep == .scene(number: 1, phase: .dialogue(page: 1)) {
                                 Task {
-                                    await soundManager.fadeOutAmbient()
+                                    await soundManager.fadeOutAmbient(duration: 0)
                                     navigationManager.navigationTo(step: story.nextStep)
                                 }
                             } else {

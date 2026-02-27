@@ -121,7 +121,7 @@ I have a grande latte for order 15!
                                                   showNextButton: false),
         .scene(number: 1, phase: .dialogue(page: 10)): StoryInfo(id: "s1_correct",
                                                                  text: """
-                                                                     Lucky guess.
+                                                                     {c}Lucky guess.{/c}
                                                                      |
                                                                      But honestly?
                                                                      |
@@ -165,7 +165,7 @@ I have a grande latte for order 15!
                                                   nextStep: .scene(number: 2, phase: .quiz(page: 1))),
         .scene(number: 2, phase: .dialogue(page: 10)): StoryInfo(id: "s2_correct",
                                                                  text: """
-                                                                     You got it.
+                                                                     {c}You got it.{/c}
                                                                      But I usually can't.
                                                                      """,
                                                                  nextStep: .scene(number: 2, phase: .dialogue(page: 2)),
@@ -224,7 +224,7 @@ I have a grande latte for order 15!
                                                   nextStep: .scene(number: 3, phase: .quiz(page: 1))),
         .scene(number: 3, phase: .dialogue(page: 10)): StoryInfo(id: "s3_correct",
                                                                  text: """
-                                                                     Correct. But I wasn't sure.
+                                                                     {c}Correct.{/c} But I wasn't sure.
                                                                      I nodded anyway.
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .dialogue(page: 3)),
@@ -286,7 +286,7 @@ I have a grande latte for order 15!
                                                                 nextStep: .scene(number: 1, phase: .quiz(page: 2))),
         .scene(number: 1, phase: .dialogue(page: 20)): StoryInfo(id: "bc1_co1",
                                                                  text: """
-                                                                     Perfect.
+                                                                     {c}Perfect.{/c}
                                                                      |
                                                                      When you face me, I can read your lips.
                                                                      I can see your expressions.
@@ -296,7 +296,7 @@ I have a grande latte for order 15!
                                                                  showPrevButton: false),
         .scene(number: 1, phase: .dialogue(page: 30)): StoryInfo(id: "bc1_co2",
                                                                  text: """
-                                                                     Great thinking!
+                                                                     {c}Great thinking!{/c}
                                                                      |
                                                                      Visual cues are incredibly helpful.
                                                                      A simple gesture can save me from
@@ -348,13 +348,13 @@ I have a grande latte for order 15!
                                                                      I don't have to hear it.
                                                                      I can just look up and know.
                                                                      |
-                                                                     This is what good design feels like.
+                                                                     This is what {c}good design{/c} feels like.
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .dialogue(page: 4)),
                                                                  showPrevButton: false),
         .scene(number: 2, phase: .dialogue(page: 30)): StoryInfo(id: "bc2_co2",
                                                                  text: """
-                                                                     Now I can read what I can't hear.
+                                                                     Now I can {c}read what I can't hear.{/c}
                                                                      Delays. Alerts. Everything.
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .dialogue(page: 4)),
@@ -364,7 +364,7 @@ I have a grande latte for order 15!
                                                                      Not heard. Felt.
                                                                      A simple flash—I never miss the doors.
                                                                      |
-                                                                     Design doesn't always need sound.
+                                                                     Design {c}doesn't always need sound.{/c}
                                                                      """,
                                                                  nextStep: .scene(number: 3, phase: .dialogue(page: 4)),
                                                                  showPrevButton: false),
@@ -387,14 +387,14 @@ I have a grande latte for order 15!
                                                                 nextStep: .scene(number: 3, phase: .quiz(page: 2))),
         .scene(number: 3, phase: .dialogue(page: 20)): StoryInfo(id: "bc3_co1",
                                                                  text: """
-                                                                     This helps more than you know.
+                                                                     This helps {c}more than you know.{/c}
                                                                      I can review what I missed—without asking.
                                                                      """,
                                                                  nextStep: .intro(page: 7),
                                                                  showPrevButton: false),
         .scene(number: 3, phase: .dialogue(page: 30)): StoryInfo(id: "bc3_co2",
                                                                  text: """
-                                                                     Perfect.
+                                                                     {c}Perfect.{/c}
                                                                      |
                                                                      I can read it at my own pace.
                                                                      You just made my day easier.
@@ -449,7 +449,7 @@ I have a grande latte for order 15!
                                                                          ],
                                                            wrongSteps: [:],
                                                            defaultWrongStep: .scene(number: 1, phase: .dialogue(page: 11)),
-                                                           hint: "Your Number is 50",
+                                                           hint: nil,
                                                            quizType: .grid,
                                                            hintCards: nil),
         .scene(number: 2, phase: .quiz(page: 1)): QuizInfo(id: "s2_q1",

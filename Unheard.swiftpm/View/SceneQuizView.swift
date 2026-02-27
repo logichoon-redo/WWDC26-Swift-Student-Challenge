@@ -18,6 +18,7 @@ struct SceneQuizView: View {
     @Environment(SoundManager.self) private var soundManager
     
     @State private var showHintSheet = false
+    @State private var showCorrectGIF = false
     
     let sceneNumber: Int
     let currentStep: StoryStep
@@ -31,51 +32,66 @@ struct SceneQuizView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color.black
-            
-            if let quiz = quizInfo {
-                VStack(spacing: .defaultSpacing) {
-                    Spacer()
-                    
-                    Text(quiz.question)
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                    
-                    if let hint = quiz.hint {
-                        Text("💡 Hint: \(hint)")
-                            .font(.subheadline)
-                            .foregroundStyle(.yellow.opacity(0.8))
-                    }
-                    
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width:1, height: 50)
-                    
-                    switch quiz.quizType {
-                    case .grid:
-                        grideOptions(quiz: quiz)
-                    case .stack:
-                        stackOptions(quiz: quiz)
-                    }
-                    
-                    if quiz.id.hasPrefix("bc") {
-                        hintButton(quiz: quiz)
-                    } else {
-                        if config.ambientAudio != nil {
-                            replayButton()
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                Color.black
+                
+                if let quiz = quizInfo {
+                    VStack(spacing: .defaultSpacing) {
+                        Spacer()
+                        
+                        Text(quiz.question)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                        
+                        if let hint = quiz.hint {
+                            Text("💡 Hint: \(hint)")
+                                .font(.subheadline)
+                                .foregroundStyle(.yellow.opacity(0.8))
                         }
+                        
+                        Rectangle()
+                            .fill(Color.clear)
+                            .frame(width:1, height: 50)
+                        
+                        switch quiz.quizType {
+                        case .grid:
+                            grideOptions(quiz: quiz)
+                        case .stack:
+                            stackOptions(quiz: quiz)
+                        }
+                        
+                        if quiz.id.hasPrefix("bc") {
+                            hintButton(quiz: quiz)
+                        } else {
+                            if config.ambientAudio != nil {
+                                replayButton()
+                            }
+                        }
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
+                }
+                
+                if showCorrectGIF {
+                    VStack {
+                        Spacer()
+                        
+                        GIFImageView(gifName: "viaductk")
+                            .frame(width: geo.size.width)
+                            .clipped()
+                            .allowsHitTesting(false)
+                            .transition(.opacity)
+                    }
+                    .ignoresSafeArea()
                 }
             }
+            .navigationBarBackButtonHidden(true)
+            .ignoresSafeArea()
         }
-        .navigationBarBackButtonHidden(true)
-        .ignoresSafeArea()
     }
     
     @ViewBuilder
@@ -114,7 +130,16 @@ struct SceneQuizView: View {
     private func optionButton(text: String, index: Int, quiz: QuizInfo) -> some View {
         Button {
             let nextStep = quiz.nextStep(for: index)
-            navigationManager.navigationTo(step: nextStep)
+            if quiz.correctIndices.contains(index) {
+                showCorrectGIF = true
+                Task {
+                    try? await Task.sleep(for: .seconds(2))
+                    showCorrectGIF = false
+                    navigationManager.navigationTo(step: nextStep)
+                }
+            } else {
+                navigationManager.navigationTo(step: nextStep)
+            }
         } label: {
             Text(text)
                 .font(.title2)
@@ -173,13 +198,20 @@ struct SceneQuizView: View {
             Button {
                 showHintSheet = true
             } label: {
-                VStack {
-                    CharacterFaceView(character: CharacterExpression.confused,
-                    size: 150)
+                ZStack {
+                    Circle()
+                        .colorMultiply(.white)
+                        .blur(radius: 50)
+                        .frame(width: 100, height: 100)
                     
-                    Text("💡 Need a hint?")
-                        .font(.subheadline)
-                        .foregroundStyle(.yellow.opacity(0.8))
+                    VStack {
+                        CharacterFaceView(character: CharacterExpression.confused,
+                                          size: 150, showGradient: false)
+                        
+                        Text("💡 Need a hint?")
+                            .font(.subheadline)
+                            .foregroundStyle(.yellow.opacity(0.8))
+                    }
                 }
             }
             .sheet(isPresented: $showHintSheet) {

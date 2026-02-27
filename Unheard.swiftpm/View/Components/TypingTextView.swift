@@ -15,6 +15,7 @@ struct TypingTextView: View {
     let pauseDelay: UInt64
     let pauseMarker: String
     let alignment: TextAlignment
+    let highlightColor: Color
     let onComplete: ((Bool) -> Void)?
     
     @State private var displayText: String = ""
@@ -27,6 +28,7 @@ struct TypingTextView: View {
          pauseDelay: UInt64 = 300_000_000,
          pauseMarker: String = "|",
          alignment: TextAlignment = .center,
+         highlightColor: Color = .yellow,
          onComplete: ((Bool) -> Void)? = nil) {
         self.text = text
         self.width = width
@@ -35,6 +37,7 @@ struct TypingTextView: View {
         self.pauseDelay = pauseDelay
         self.pauseMarker = pauseMarker
         self.alignment = alignment
+        self.highlightColor = highlightColor
         self.onComplete = onComplete
     }
     
@@ -46,10 +49,55 @@ struct TypingTextView: View {
         }
     }
     
+    private var cleanText: String {
+        text.replacingOccurrences(of: pauseMarker, with: "")
+            .replacingOccurrences(of: "{c}", with: "")
+            .replacingOccurrences(of: "{/c}", with: "")
+    }
+    
+    private var styledDisplayText: AttributedString {
+        var raw = displayText
+        var result = AttributedString()
+        
+        while let openRange = raw.range(of: "{c}") {
+            // 태그 앞 일반 텍스트
+            let before = String(raw[raw.startIndex..<openRange.lowerBound])
+            if !before.isEmpty {
+                var attr = AttributedString(before)
+                attr.foregroundColor = .white
+                result += attr
+            }
+            
+            raw = String(raw[openRange.upperBound...])
+            
+            if let closeRange = raw.range(of: "{/c}") {
+                let highlighted = String(raw[raw.startIndex..<closeRange.lowerBound])
+                var attr = AttributedString(highlighted)
+                attr.foregroundColor = highlightColor
+                result += attr
+                raw = String(raw[closeRange.upperBound...])
+            } else {
+                // ✅ 타이핑 중 닫는 태그가 아직 안 나왔을 때
+                var attr = AttributedString(raw)
+                attr.foregroundColor = highlightColor
+                result += attr
+                raw = ""
+            }
+        }
+        
+        if !raw.isEmpty {
+            var attr = AttributedString(raw)
+            attr.foregroundColor = .white
+            result += attr
+        }
+        
+        return result
+    }
+    
     var body: some View {
         ZStack(alignment: Alignment(horizontal: horizontalAlignment, vertical: .top)) {
             // 투명한 전체 텍스트로 공간 확보
-            Text(text.replacingOccurrences(of: pauseMarker, with: ""))
+            Text(cleanText)
                 .font(.title)
                 .foregroundStyle(.clear)
                 .multilineTextAlignment(alignment)
@@ -58,9 +106,9 @@ struct TypingTextView: View {
             
             // 실제 표시되는 타이핑 텍스트
             VStack {
-                Text(displayText)
+                Text(styledDisplayText)
                     .font(.title)
-                    .foregroundStyle(.white)
+//                    .foregroundStyle(.white)
                     .multilineTextAlignment(alignment)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
