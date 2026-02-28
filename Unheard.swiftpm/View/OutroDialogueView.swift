@@ -7,20 +7,13 @@
 
 import SwiftUI
 
-import SwiftUI
-
 @available(iOS 17.0, *)
 struct OutroDialogueView: View {
     @State private var showButton = false
     @Environment(StoryNavigationManager.self) private var navigationManager
     @Environment(SoundManager.self) private var soundManager
-//    let sceneNumber: Int
     let currentStep: StoryStep
-    
-//    private var config: SceneConfig {
-//        SceneConfig.config(for: sceneNumber)
-//    }
-    
+
     private var storyInfo: StoryInfo? {
         StoryData.messages[currentStep]
     }
@@ -28,14 +21,8 @@ struct OutroDialogueView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                // ✅ StoryInfo의 background 색상 사용
-//                if let story = storyInfo {
-//                    story.background.color
-//                        .ignoresSafeArea()
-//                } else {
-                    Color.black
-                        .ignoresSafeArea()
-//                }
+                currentStep.backgroundColor
+                    .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
                     Spacer()
@@ -45,6 +32,7 @@ struct OutroDialogueView: View {
                                        width: max(0, geo.size.width - (.defaultSpacing * 2)),
                                        height: max(0, geo.size.height * 0.25),
                                        alignment: .leading,
+                                       baseTextColor: currentStep.textColor,
                                        onComplete: { completed in
                             if completed {
                                 withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
@@ -54,14 +42,14 @@ struct OutroDialogueView: View {
                         })
                         .padding(.horizontal, .defaultSpacing)
                         
-                        CharacterFaceView(character: story.expression)
+                        CharacterFaceView(character: story.expression,
+                                          gradientColor: currentStep.backgroundColor)
                         
                         Spacer()
                         
-                        // ✅ Experience Again 버튼 (하단, PageNavigationBar 자리)
                         Button {
                             soundManager.stop()
-                            navigationManager.reset()  // ✅ NavigationPath 초기화 → HeadPhoneCheckView로
+                            navigationManager.reset()
                         } label: {
                             HStack(spacing: 8) {
                                 Image(systemName: "arrow.counterclockwise")
@@ -77,7 +65,6 @@ struct OutroDialogueView: View {
                     }
                 }
             }
-            .navigationBarBackButtonHidden(true)
             .ignoresSafeArea()
             .onAppear {
                 showButton = false

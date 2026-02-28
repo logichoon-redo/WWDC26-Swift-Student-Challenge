@@ -16,14 +16,17 @@ struct PageNavigationButton: View {
     let direction: NavigationDirection
     let action: () -> Void
     let text: String
+    let textColor: Color
     
     init(
         direction: NavigationDirection,
         text: String,
+        textColor: Color = .white,
         action: @escaping () -> Void
     ) {
         self.direction = direction
         self.text = text
+        self.textColor = textColor
         self.action = action
     }
     
@@ -42,7 +45,7 @@ struct PageNavigationButton: View {
             }
             .bold()
             .font(.system(size: .smallFontSize))
-            .foregroundStyle(.white.opacity(0.8))
+            .foregroundStyle(textColor.opacity(0.8))
         }
     }
     

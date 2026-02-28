@@ -32,11 +32,11 @@ struct SceneTTSView: View {
             if showCharacter {
                 CharacterFaceView(character: config.npc,
                                   showGradient: false,
-                                  glowLevel: soundManager.audioLevel)
+                                  glowLevel: soundManager.audioLevel,
+                                  gradientColor: currentStep.backgroundColor)
                 .transition(.opacity)
             }
         }
-        .navigationBarBackButtonHidden(true)
         .ignoresSafeArea()
         .task {
             try? await Task.sleep(for: .seconds(0.5))

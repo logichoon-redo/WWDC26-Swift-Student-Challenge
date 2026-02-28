@@ -11,37 +11,77 @@ import SwiftUI
 @Observable
 @MainActor
 class StoryNavigationManager {
-    var path = NavigationPath()
+    var stepStack: [StoryStep] = []
     var replayUsedScenes: Set<Int> = []
     private var isNavigating = false
+    var isTransitioning = false
+    
+    var currentStep: StoryStep {
+        stepStack.last ?? .headPhoneCheck
+    }
     
     func navigationTo(step: StoryStep) {
         guard !isNavigating else { return }
         isNavigating = true
-        path.append(step)
+        
+        withAnimation(.easeInOut(duration: 0.15)) {
+            isTransitioning = true
+        }
         
         Task { @MainActor in
-            try? await Task.sleep(for: .seconds(0.3))
+            try? await Task.sleep(for: .seconds(0.15))
+            self.stepStack.append(step)
+            
+            try? await Task.sleep(for: .seconds(0.08))
+            withAnimation(.easeIn(duration: 0.15)) {
+                self.isTransitioning = false
+            }
+            
+            try? await Task.sleep(for: .seconds(0.2))
             self.isNavigating = false
         }
     }
     
     func goBack() {
-        guard !path.isEmpty else { return }
+        guard !stepStack.isEmpty, !isNavigating else { return }
         isNavigating = true
-        path.removeLast()
+        
+        withAnimation(.easeOut(duration: 0.15)) {
+            isTransitioning = true
+        }
         
         Task { @MainActor in
-            try? await Task.sleep(for: .seconds(0.3))
+            try? await Task.sleep(for: .seconds(0.15))
+            self.stepStack.removeLast()
+            
+            try? await Task.sleep(for: .seconds(0.08))
+            withAnimation(.easeIn(duration: 0.15)) {
+                self.isTransitioning = false
+            }
+            
+            try? await Task.sleep(for: .seconds(0.2))
             self.isNavigating = false
         }
     }
     
     func reset() {
-        path = NavigationPath()
+        isNavigating = false
+        withAnimation(.easeOut(duration: 0.2)) {
+            isTransitioning = true
+        }
+        
+        Task {
+            try? await Task.sleep(for: .seconds(0.2))
+            self.stepStack.removeAll()
+            
+            withAnimation(.easeIn(duration: 0.25)) {
+                self.isTransitioning = false
+            }
+        }
     }
     
     func popTo(count: Int) {
-        path.removeLast(count)
+        guard stepStack.count >= count else { return }
+        stepStack.removeLast(count)
     }
 }

@@ -13,6 +13,7 @@ struct CharacterFaceView: View {
     let showGradient: Bool
     var glowLevel: Float
     let size: CGFloat
+    let gradientColor: Color
     
     private var glowRadius: CGFloat {
         CGFloat(glowLevel) * 40
@@ -24,11 +25,13 @@ struct CharacterFaceView: View {
     init(character: any CharacterImageProvider,
          size: CGFloat = 300,
          showGradient: Bool = true,
-         glowLevel: Float = 0.0) {
+         glowLevel: Float = 0.0,
+         gradientColor: Color = .black) {
         self.character = character
         self.size = size
         self.showGradient = showGradient
         self.glowLevel = glowLevel
+        self.gradientColor = gradientColor
     }
     
     var body: some View {
@@ -48,7 +51,7 @@ struct CharacterFaceView: View {
                     if showGradient {
                         LinearGradient(gradient: Gradient(colors: [
                             .clear,
-                            .black
+                            gradientColor
                         ]),
                                        startPoint: .center,
                                        endPoint: .bottom)

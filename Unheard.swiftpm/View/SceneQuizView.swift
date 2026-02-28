@@ -34,7 +34,7 @@ struct SceneQuizView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                Color.black
+                currentStep.backgroundColor
                 
                 if let quiz = quizInfo {
                     VStack(spacing: .defaultSpacing) {
@@ -43,7 +43,7 @@ struct SceneQuizView: View {
                         Text(quiz.question)
                             .font(.title)
                             .fontWeight(.bold)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(currentStep.textColor)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
                         
@@ -89,7 +89,6 @@ struct SceneQuizView: View {
                     .ignoresSafeArea()
                 }
             }
-            .navigationBarBackButtonHidden(true)
             .ignoresSafeArea()
         }
     }
@@ -200,17 +199,18 @@ struct SceneQuizView: View {
             } label: {
                 ZStack {
                     Circle()
-                        .colorMultiply(.white)
+                        .colorMultiply(currentStep.glowColor)
                         .blur(radius: 50)
                         .frame(width: 100, height: 100)
                     
                     VStack {
                         CharacterFaceView(character: CharacterExpression.confused,
-                                          size: 150, showGradient: false)
+                                          size: 150, showGradient: false,
+                                          gradientColor: currentStep.backgroundColor)
                         
                         Text("💡 Need a hint?")
                             .font(.subheadline)
-                            .foregroundStyle(.yellow.opacity(0.8))
+                            .foregroundStyle(currentStep.accentTextColor.opacity(0.8))
                     }
                 }
             }

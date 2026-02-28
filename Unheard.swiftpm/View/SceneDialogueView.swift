@@ -10,6 +10,7 @@ import SwiftUI
 @available(iOS 17.0, *)
 struct SceneDialogueView: View {
     @State private var showButton = false
+    @State private var showLocationToast = false
     @Environment(StoryNavigationManager.self) private var navigationManager
     @Environment(SoundManager.self) private var soundManager
     let sceneNumber: Int
@@ -28,7 +29,8 @@ struct SceneDialogueView: View {
             ZStack {
                 SceneBackgroundView(background: config.background,
                                     isBlurred: false,
-                                    showBottomGradient: true)
+                                    showBottomGradient: true,
+                                    gradientColor: currentStep.backgroundColor)
                 
                 VStack(spacing: 20) {
                     Spacer()
@@ -38,6 +40,7 @@ struct SceneDialogueView: View {
                                        width: max(0, geo.size.width - (.defaultSpacing * 2)),
                                        height: max(0, geo.size.height * 0.2),
                                        alignment: .leading,
+                                       baseTextColor: currentStep.textColor,
                                        onComplete: { completed in
                             if completed {
                                 withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
@@ -52,6 +55,7 @@ struct SceneDialogueView: View {
                                           showNext: story.showNextButton && showButton,
                                           prevText: story.prevButtonText,
                                           nextText: story.nextButtonText,
+                                          textColor: currentStep.textColor,
                                           prevDestination: { navigationManager.goBack()
                             let suffix = String(story.id.suffix(2))
                             if suffix == "d1" {
@@ -65,11 +69,22 @@ struct SceneDialogueView: View {
                         })
                     }
                 }
+                
+                VStack {
+                    if showLocationToast {
+                        LocationToastView(text: config.locationName,
+                                          textColor: currentStep.textColor)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding(.top, 60)
+                    }
+                    
+                    Spacer()
+                }
             }
-            .navigationBarBackButtonHidden(true)
             .ignoresSafeArea()
             .onAppear {
                 showButton = false
+                showLocationToast = false
             }
             .task {
                 guard let storyInfo else { return }
@@ -77,6 +92,16 @@ struct SceneDialogueView: View {
                 
                 switch suffix {
                 case "d1":
+                    try? await Task.sleep(for: .seconds(0.2))
+                    withAnimation(.easeOut(duration: 0.4)) {
+                        showLocationToast = true
+                    }
+                    
+                    try? await Task.sleep(for: .seconds(2.0))
+                    withAnimation(.easeIn(duration: 0.3)) {
+                        showLocationToast = false
+                    }
+                    
                     if let audio = config.ambientAudio {
                         await soundManager.setup()
                         

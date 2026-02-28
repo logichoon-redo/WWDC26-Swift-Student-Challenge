@@ -16,6 +16,7 @@ struct TypingTextView: View {
     let pauseMarker: String
     let alignment: TextAlignment
     let highlightColor: Color
+    let baseTextColor: Color
     let onComplete: ((Bool) -> Void)?
     
     @State private var displayText: String = ""
@@ -28,7 +29,9 @@ struct TypingTextView: View {
          pauseDelay: UInt64 = 300_000_000,
          pauseMarker: String = "|",
          alignment: TextAlignment = .center,
+         baseTextColor: Color = .white,
          highlightColor: Color = .yellow,
+         
          onComplete: ((Bool) -> Void)? = nil) {
         self.text = text
         self.width = width
@@ -38,6 +41,7 @@ struct TypingTextView: View {
         self.pauseMarker = pauseMarker
         self.alignment = alignment
         self.highlightColor = highlightColor
+        self.baseTextColor = baseTextColor
         self.onComplete = onComplete
     }
     
@@ -64,7 +68,7 @@ struct TypingTextView: View {
             let before = String(raw[raw.startIndex..<openRange.lowerBound])
             if !before.isEmpty {
                 var attr = AttributedString(before)
-                attr.foregroundColor = .white
+                attr.foregroundColor = baseTextColor
                 result += attr
             }
             
@@ -87,7 +91,7 @@ struct TypingTextView: View {
         
         if !raw.isEmpty {
             var attr = AttributedString(raw)
-            attr.foregroundColor = .white
+            attr.foregroundColor = baseTextColor
             result += attr
         }
         
@@ -108,7 +112,6 @@ struct TypingTextView: View {
             VStack {
                 Text(styledDisplayText)
                     .font(.title)
-//                    .foregroundStyle(.white)
                     .multilineTextAlignment(alignment)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)

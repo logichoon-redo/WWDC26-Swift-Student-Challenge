@@ -72,21 +72,26 @@ struct SceneConfig {
     let background: SceneBackground
     let npc: NPCCharacter
     let ambientAudio: AmbientAudio?
+    let locationName: String
     
     static func config(for sceneNumber: Int) -> SceneConfig {
         switch sceneNumber {
         case 1: SceneConfig(background: .coffeeShop,
                             npc: .barista,
-                            ambientAudio: .coffeeShop)
+                            ambientAudio: .coffeeShop,
+                            locationName: "☕️ Coffee Shop")
         case 2: SceneConfig(background: .subway,
                             npc: .speaker,
-                            ambientAudio: .subway)
+                            ambientAudio: .subway,
+                            locationName: "🚇 Subway")
         case 3: SceneConfig(background: .meeting,
                             npc: .manager,
-                            ambientAudio: .office)
+                            ambientAudio: .office,
+                            locationName: "💼 Team Meeting")
         default: SceneConfig(background: .custom(imageName: ""),
                              npc: .none,
-                             ambientAudio: .calm)
+                             ambientAudio: .calm,
+                             locationName: "")
         }
     }
 }

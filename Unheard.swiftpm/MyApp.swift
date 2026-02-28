@@ -9,19 +9,20 @@ struct MyApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                Color.black
+                navigationManager.currentStep.backgroundColor
                 
-                NavigationStack(path: $navigationManager.path) {
-                    HeadPhoneCheckView()
-                        .navigationDestination(for: StoryStep.self) { step in
-                            destinationView(for: step)
-                        }
-                }
-                .environment(navigationManager)
-                .environment(soundManager)
-                .navigationBarBackButtonHidden(true)
+                
+                destinationView(for: navigationManager.currentStep)
+                                    .id(navigationManager.currentStep)
+                                    
+                navigationManager.currentStep.backgroundColor
+                    .opacity(navigationManager.isTransitioning ? 1 : 0)
+                    .allowsHitTesting(false)
             }
             .ignoresSafeArea()
+            .environment(navigationManager)
+            .environment(soundManager)
+
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                 soundManager.pauseAmbient()
             }
