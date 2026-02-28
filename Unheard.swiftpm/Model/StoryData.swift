@@ -338,7 +338,7 @@ I have a grande latte for order 15!
         .scene(number: 2, phase: .dialogue(page: 4)): StoryInfo(id: "bc2_d2",
                                                                 text: """
                                                                     Which feature would help
-                                                                    passengers like him the most?
+                                                                    passengers like me the most?
                                                                     |
                                                                     How would you help?
                                                                     """,
@@ -508,7 +508,7 @@ I have a grande latte for order 15!
                                                            question: "How would you help?",
                                                            options: [
                                                             "Make the announcements louder",
-                                                            "Display station name on screen",
+                                                            "Display station name on screens",
                                                             "Add real-time captions",
                                                             "Flash lights when doors close"
                                                            ],

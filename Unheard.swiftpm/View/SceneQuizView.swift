@@ -34,7 +34,10 @@ struct SceneQuizView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                Color.black
+                SceneBackgroundView(background: config.background,
+                                    isBlurred: true,
+                                    showBottomGradient: false,
+                                    brightness: 0.0)
                 
                 if let quiz = quizInfo {
                     VStack(spacing: .defaultSpacing) {

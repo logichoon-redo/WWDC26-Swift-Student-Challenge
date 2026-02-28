@@ -31,7 +31,7 @@ struct OutroDialogueView: View {
                         TypingTextView(text: story.text,
                                        width: max(0, geo.size.width - (.defaultSpacing * 2)),
                                        height: max(0, geo.size.height * 0.25),
-                                       alignment: .leading,
+                                       alignment: .center,
                                        onComplete: { completed in
                             if completed {
                                 withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
