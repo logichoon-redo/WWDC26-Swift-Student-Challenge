@@ -105,7 +105,7 @@ struct SceneDialogueView: View {
                         showLocationToast = true
                     }
                     
-                    try? await Task.sleep(for: .seconds(3.0))
+                    try? await Task.sleep(for: .seconds(2.5))
                     withAnimation(.easeIn(duration: 0.3)) {
                         showLocationToast = false
                     }
