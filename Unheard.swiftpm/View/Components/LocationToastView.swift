@@ -20,6 +20,7 @@ struct LocationToastView: View {
             .background {
                 Capsule()
                     .fill(.ultraThinMaterial)
+                    .shadow(radius: 10)
             }
     }
 }
