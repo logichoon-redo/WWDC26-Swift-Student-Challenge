@@ -68,7 +68,13 @@ struct SceneDialogueView: View {
                             }
                         },
                                           nextDestination: {
-                            navigationManager.navigationTo(step: story.nextStep)
+                            if navigationManager.isReplayFromOutro,
+                               let info = storyInfo, (info.id.hasPrefix("bc") && info.id.contains("co")) {
+                                navigationManager.isReplayFromOutro = false
+                                navigationManager.returnToOutro()
+                            } else {
+                                navigationManager.navigationTo(step: story.nextStep)
+                            }
                         })
                     }
                 }

@@ -432,7 +432,7 @@ I have a grande latte for order 15!
                                        |
                                        Thank you for listening.
                                        |
-                                       — Gosan
+                                       — Gosan —
                                        """,
                                    expression: .empathetic)
     ]

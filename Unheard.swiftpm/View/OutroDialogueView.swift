@@ -18,6 +18,12 @@ struct OutroDialogueView: View {
         StoryData.messages[currentStep]
     }
     
+    private let bcQuizzes: [(emoji: String, title: String, step: StoryStep)] = [
+        ("☕️", "Coffee Shop", .scene(number: 1, phase: .quiz(page: 2))),
+        ("🚇", "Subway", .scene(number: 2, phase: .quiz(page: 2))),
+        ("💼", "Team Meeting", .scene(number: 3, phase: .quiz(page: 2)))
+    ]
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -43,7 +49,38 @@ struct OutroDialogueView: View {
                         
                         CharacterFaceView(character: story.expression)
                         
-                        Spacer()
+                        VStack(spacing: 12) {
+                            Text("Try again")
+                                .font(.caption)
+                                .foregroundStyle(.white.opacity(0.5))
+                            
+                            HStack(spacing: 16) {
+                                ForEach(bcQuizzes, id: \.title) { quiz in
+                                    Button {
+                                        navigationManager.isReplayFromOutro = true
+                                        navigationManager.navigationTo(step: quiz.step)
+                                    } label: {
+                                        VStack(spacing: 6) {
+                                            Text(quiz.emoji)
+                                                .font(.title)
+                                            
+                                            Text(quiz.title)
+                                                .font(.caption2)
+                                                .foregroundStyle(.white.opacity(0.7))
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 12)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(.white.opacity(0.1))
+                                        )
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, .defaultSpacing)
+                        }
+                        .opacity(showButton ? 1 : 0)
+                        .disabled(!showButton)
                         
                         Button {
                             soundManager.stop()

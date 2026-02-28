@@ -13,6 +13,7 @@ import SwiftUI
 class StoryNavigationManager {
     var stepStack: [StoryStep] = []
     var replayUsedScenes: Set<Int> = []
+    var isReplayFromOutro = false
     private var isNavigating = false
     var isTransitioning = false
     
@@ -81,7 +82,48 @@ class StoryNavigationManager {
     }
     
     func popTo(count: Int) {
-        guard stepStack.count >= count else { return }
-        stepStack.removeLast(count)
+        guard stepStack.count >= count, !isNavigating else { return }
+        isNavigating = true
+        
+        withAnimation(.easeOut(duration: 0.15)) {
+            isTransitioning = true
+        }
+        
+        Task {
+            try? await Task.sleep(for: .seconds(0.15))
+            self.stepStack.removeLast(count)
+            
+            try? await Task.sleep(for: .seconds(0.08))
+            withAnimation(.easeIn(duration: 0.15)) {
+                self.isTransitioning = false
+            }
+            
+            try? await Task.sleep(for: .seconds(0.2))
+            self.isNavigating = false
+        }
+    }
+    
+    func returnToOutro() {
+        guard !isNavigating else { return }
+        isNavigating = true
+        
+        withAnimation(.easeOut(duration: 0.15)) {
+            isTransitioning = true
+        }
+        
+        Task {
+            try? await Task.sleep(for: .seconds(0.15))
+            while let last = self.stepStack.last, last != .outro(page: 1) {
+                self.stepStack.removeLast()
+            }
+            
+            try? await Task.sleep(for: .seconds(0.08))
+            withAnimation(.easeIn(duration: 0.15)) {
+                self.isTransitioning = false
+            }
+            
+            try? await Task.sleep(for: .seconds(0.2))
+            self.isNavigating = false
+        }
     }
 }
