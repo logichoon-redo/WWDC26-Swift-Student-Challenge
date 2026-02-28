@@ -93,6 +93,11 @@ struct OutroDialogueView: View {
                             .font(.body)
                             .fontWeight(.semibold)
                             .foregroundStyle(.white.opacity(0.8))
+                            .phaseAnimator([0.4, 1.0]) { content, phase in
+                                content.opacity(phase)
+                            } animation: { _ in
+                                    .easeInOut(duration: 1.5)
+                            }
                         }
                         .opacity(showButton ? 1 : 0)
                         .disabled(!showButton)
