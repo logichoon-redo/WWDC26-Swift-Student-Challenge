@@ -35,7 +35,7 @@ struct SceneDialogueView: View {
                 SceneBackgroundView(background: config.background,
                                     isBlurred: false,
                                     showBottomGradient: true,
-                                    brightness: isBCScene ? 0.2 : 0.0)
+                                    brightness: isBCScene ? 0.1 : 0.0)
                 
                 VStack(spacing: 20) {
                     Spacer()

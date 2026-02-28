@@ -12,51 +12,49 @@ headphones 🎧.
 """
     
     var body: some View {
-        NavigationView {
-            GeometryReader { geo in
-                ZStack {
-                    Color.black
+        GeometryReader { geo in
+            ZStack {
+                Color.black
+                
+                VStack(spacing: 50) {
+                    Spacer()
+                        .frame(height: 50)
                     
-                    VStack(spacing: 50) {
-                        Spacer()
-                            .frame(height: 50)
-                        
-                        Image(systemName: "waveform")
-                            .font(.system(size: 70))
-                            .foregroundStyle(.white)
-                            .sfSymvolAnimated(true)
-                        
-                        TypingTextView(text: fullText,
-                                       width: geo.size.width,
-                                       height: geo.size.height * 0.3,
-                                       typingSpeed: 20_000_000) { completed in
-                            if completed {
-                                withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
-                                    showButton = true
-                                }
+                    Image(systemName: "waveform")
+                        .font(.system(size: 70))
+                        .foregroundStyle(.white)
+                        .sfSymvolAnimated(true)
+                    
+                    TypingTextView(text: fullText,
+                                   width: geo.size.width,
+                                   height: geo.size.height * 0.3,
+                                   typingSpeed: 20_000_000) { completed in
+                        if completed {
+                            withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
+                                showButton = true
                             }
                         }
-                        
-                        Text("Tap anywhere to skip animations")
-                            .font(.caption)
-                            .foregroundStyle(.white.opacity(0.4))
-                            .opacity(showButton ? 1 : 0)
-                            .phaseAnimator([0.4, 1.0]) { content, phase in
-                                content.opacity(phase)
-                            } animation: { _ in
-                                    .easeInOut(duration: 1.5)
-                            }
-                        
-                        Button("Continue") {
-                            navigationManager.navigationTo(step: .intro(page: 1))
-                            // TODO: intro(page: 1)으로 되돌려 놓기. (테스트를 위해 page 4로 둠)
-                        }
-                        .buttonStyle(.bordered)
-                        .opacity(showButton ? 1 : 0)
                     }
+                    
+                    Text("Tap anywhere to skip animations")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.4))
+                        .opacity(showButton ? 1 : 0)
+                        .phaseAnimator([0.4, 1.0]) { content, phase in
+                            content.opacity(phase)
+                        } animation: { _ in
+                                .easeInOut(duration: 1.5)
+                        }
+                    
+                    Button("Continue") {
+                        navigationManager.navigationTo(step: .intro(page: 1))
+                        // TODO: intro(page: 1)으로 되돌려 놓기. (테스트를 위해 page 4로 둠)
+                    }
+                    .buttonStyle(.bordered)
+                    .opacity(showButton ? 1 : 0)
                 }
-                .ignoresSafeArea()
             }
+            .ignoresSafeArea()
         }
     }
     

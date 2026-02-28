@@ -85,10 +85,11 @@ struct StoryData {
                                    showPrevButton: false),
         .intro(page: 2): StoryInfo(id: "intro_2",
                                    text: """
-            I also have mild hearing loss.
-            |
-            Most people don't notice.           But I struggle every single day.
-            """,
+                                       I also have mild hearing loss.
+                                       |
+                                       Most people don't notice.
+                                       But I struggle every single day.
+                                       """,
                                    expression: .empathetic,
                                    nextStep: .intro(page: 3)),
         .intro(page: 3): StoryInfo(id: "intro_3",
