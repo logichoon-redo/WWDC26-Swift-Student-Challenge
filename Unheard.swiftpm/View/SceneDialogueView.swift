@@ -24,13 +24,18 @@ struct SceneDialogueView: View {
         StoryData.messages[currentStep]
     }
     
+    private var isBCScene: Bool {
+        guard let info = storyInfo else { return false }
+        return info.id.hasPrefix("bc")
+    }
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
                 SceneBackgroundView(background: config.background,
                                     isBlurred: false,
                                     showBottomGradient: true,
-                                    gradientColor: currentStep.backgroundColor)
+                                    brightness: isBCScene ? 0.2 : 0.0)
                 
                 VStack(spacing: 20) {
                     Spacer()
@@ -40,7 +45,6 @@ struct SceneDialogueView: View {
                                        width: max(0, geo.size.width - (.defaultSpacing * 2)),
                                        height: max(0, geo.size.height * 0.2),
                                        alignment: .leading,
-                                       baseTextColor: currentStep.textColor,
                                        onComplete: { completed in
                             if completed {
                                 withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
@@ -55,7 +59,6 @@ struct SceneDialogueView: View {
                                           showNext: story.showNextButton && showButton,
                                           prevText: story.prevButtonText,
                                           nextText: story.nextButtonText,
-                                          textColor: currentStep.textColor,
                                           prevDestination: { navigationManager.goBack()
                             let suffix = String(story.id.suffix(2))
                             if suffix == "d1" {
@@ -72,8 +75,7 @@ struct SceneDialogueView: View {
                 
                 VStack {
                     if showLocationToast {
-                        LocationToastView(text: config.locationName,
-                                          textColor: currentStep.textColor)
+                        LocationToastView(text: config.locationName)
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .padding(.top, 60)
                     }

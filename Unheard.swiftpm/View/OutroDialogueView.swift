@@ -21,7 +21,7 @@ struct OutroDialogueView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                currentStep.backgroundColor
+                Color.black
                     .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
@@ -32,7 +32,6 @@ struct OutroDialogueView: View {
                                        width: max(0, geo.size.width - (.defaultSpacing * 2)),
                                        height: max(0, geo.size.height * 0.25),
                                        alignment: .leading,
-                                       baseTextColor: currentStep.textColor,
                                        onComplete: { completed in
                             if completed {
                                 withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
@@ -42,8 +41,7 @@ struct OutroDialogueView: View {
                         })
                         .padding(.horizontal, .defaultSpacing)
                         
-                        CharacterFaceView(character: story.expression,
-                                          gradientColor: currentStep.backgroundColor)
+                        CharacterFaceView(character: story.expression)
                         
                         Spacer()
                         

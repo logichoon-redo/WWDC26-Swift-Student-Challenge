@@ -32,8 +32,7 @@ struct SceneTTSView: View {
             if showCharacter {
                 CharacterFaceView(character: config.npc,
                                   showGradient: false,
-                                  glowLevel: soundManager.audioLevel,
-                                  gradientColor: currentStep.backgroundColor)
+                                  glowLevel: soundManager.audioLevel)
                 .transition(.opacity)
             }
         }

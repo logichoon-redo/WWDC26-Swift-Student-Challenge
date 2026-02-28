@@ -22,7 +22,7 @@ struct StoryMessageView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                currentStep.backgroundColor
+                Color.black
                 
                 VStack(spacing: 20) {
                     Spacer()
@@ -31,7 +31,6 @@ struct StoryMessageView: View {
                         TypingTextView(text: story.text,
                                        width: geo.size.width,
                                        height: geo.size.height * 0.3,
-                                       baseTextColor: currentStep.textColor,
                                        onComplete: { completed in
                             if completed {
                                 withAnimation(.easeOut(duration: 0.3).delay(0.3)) {
@@ -40,14 +39,12 @@ struct StoryMessageView: View {
                             }
                         })
                         
-                        CharacterFaceView(character: story.expression,
-                                          gradientColor: currentStep.backgroundColor)
+                        CharacterFaceView(character: story.expression)
                         
                         PageNavigationBar(showPrev: story.showPrevButton,
                                           showNext: story.showNextButton && showButton,
                                           prevText: story.prevButtonText,
                                           nextText: story.nextButtonText,
-                                          textColor: currentStep.textColor,
                                           prevDestination: {
                             navigationManager.goBack()
                         },

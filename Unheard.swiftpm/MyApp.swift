@@ -9,20 +9,19 @@ struct MyApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                navigationManager.currentStep.backgroundColor
+                Color.black
                 
                 
                 destinationView(for: navigationManager.currentStep)
                                     .id(navigationManager.currentStep)
                                     
-                navigationManager.currentStep.backgroundColor
+                Color.black
                     .opacity(navigationManager.isTransitioning ? 1 : 0)
                     .allowsHitTesting(false)
             }
             .ignoresSafeArea()
             .environment(navigationManager)
             .environment(soundManager)
-
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                 soundManager.pauseAmbient()
             }

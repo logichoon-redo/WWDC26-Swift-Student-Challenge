@@ -12,7 +12,6 @@ struct PageNavigationBar: View {
     let showNext: Bool
     let prevText: String
     let nextText: String
-    let textColor: Color
     let prevDestination: () -> Void
     let nextDestination: () -> Void
     
@@ -20,14 +19,12 @@ struct PageNavigationBar: View {
          showNext: Bool = true,
          prevText: String,
          nextText: String,
-         textColor: Color = .white,
          prevDestination: @escaping () -> Void,
          nextDestination: @escaping () -> Void) {
         self.showPrev = showPrev
         self.showNext = showNext
         self.prevText = prevText
         self.nextText = nextText
-        self.textColor = textColor
         self.prevDestination = prevDestination
         self.nextDestination = nextDestination
     }
@@ -38,7 +35,6 @@ struct PageNavigationBar: View {
                 
                 PageNavigationButton(direction: .prev,
                                      text: prevText,
-                                     textColor: textColor,
                                      action: prevDestination)
                 .opacity(showPrev ? 1 : 0)
                 .disabled(!showPrev)
@@ -47,7 +43,6 @@ struct PageNavigationBar: View {
                 
                 PageNavigationButton(direction: .next,
                                      text: nextText,
-                                     textColor: textColor,
                                      action: nextDestination)
                 .opacity(showNext ? 1 : 0.3)
                 .disabled(!showNext)

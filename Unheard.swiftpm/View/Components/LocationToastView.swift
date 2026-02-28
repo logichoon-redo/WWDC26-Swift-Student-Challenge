@@ -9,15 +9,14 @@ import SwiftUI
 
 struct LocationToastView: View {
     let text: String
-    let textColor: Color
     
     var body: some View {
         Text(text)
-            .font(.subheadline)
+            .font(.title3)
             .fontWeight(.semibold)
-            .foregroundStyle(textColor.opacity(0.9))
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
+            .foregroundStyle(Color.black.opacity(0.9))
+            .padding(.horizontal, 28)
+            .padding(.vertical, 14)
             .background {
                 Capsule()
                     .fill(.ultraThinMaterial)

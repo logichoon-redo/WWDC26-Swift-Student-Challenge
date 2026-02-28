@@ -16,11 +16,11 @@ struct TypingTextView: View {
     let pauseMarker: String
     let alignment: TextAlignment
     let highlightColor: Color
-    let baseTextColor: Color
     let onComplete: ((Bool) -> Void)?
     
     @State private var displayText: String = ""
     @State private var textProgress: Int = 0
+    @State private var isSkipped = false
     
     init(text: String,
          width: CGFloat,
@@ -29,9 +29,7 @@ struct TypingTextView: View {
          pauseDelay: UInt64 = 300_000_000,
          pauseMarker: String = "|",
          alignment: TextAlignment = .center,
-         baseTextColor: Color = .white,
          highlightColor: Color = .yellow,
-         
          onComplete: ((Bool) -> Void)? = nil) {
         self.text = text
         self.width = width
@@ -41,7 +39,6 @@ struct TypingTextView: View {
         self.pauseMarker = pauseMarker
         self.alignment = alignment
         self.highlightColor = highlightColor
-        self.baseTextColor = baseTextColor
         self.onComplete = onComplete
     }
     
@@ -68,7 +65,7 @@ struct TypingTextView: View {
             let before = String(raw[raw.startIndex..<openRange.lowerBound])
             if !before.isEmpty {
                 var attr = AttributedString(before)
-                attr.foregroundColor = baseTextColor
+                attr.foregroundColor = .white
                 result += attr
             }
             
@@ -91,7 +88,7 @@ struct TypingTextView: View {
         
         if !raw.isEmpty {
             var attr = AttributedString(raw)
-            attr.foregroundColor = baseTextColor
+            attr.foregroundColor = .white
             result += attr
         }
         
@@ -122,14 +119,29 @@ struct TypingTextView: View {
         .frame(width: max(0, width),
                height: max(0, height),
                alignment: Alignment(horizontal: horizontalAlignment, vertical: .top))
+        .contentShape(Rectangle())
+        .onTapGesture {
+            skipTyping()
+        }
         .task {
             await typeText()
         }
     }
     
+    private func skipTyping() {
+        guard !isSkipped else { return }
+        isSkipped = true
+        displayText = text.replacingOccurrences(of: pauseMarker, with: "")
+        onComplete?(true)
+    }
+    
     private func typeText() async {
         for i in 0...text.count {
+            if isSkipped { return }
+            
             try? await Task.sleep(nanoseconds: typingSpeed)
+            
+            if isSkipped { return }
             
             textProgress = i
             
@@ -141,6 +153,7 @@ struct TypingTextView: View {
                 
                 if currentCharacter == pauseMarker {
                     try? await Task.sleep(nanoseconds: pauseDelay)
+                    if isSkipped { return }
                 }
             }
             

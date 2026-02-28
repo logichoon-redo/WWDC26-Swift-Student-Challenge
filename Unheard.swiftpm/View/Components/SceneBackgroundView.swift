@@ -11,7 +11,7 @@ struct SceneBackgroundView: View {
     let background: SceneBackground
     var isBlurred: Bool = false
     var showBottomGradient: Bool = true
-    var gradientColor: Color = .black
+    var brightness: Double = 0.0
     
     var body: some View {
         GeometryReader { geo in
@@ -23,6 +23,7 @@ struct SceneBackgroundView: View {
                            height: geo.size.height)
                     .clipped()
                     .blur(radius: isBlurred ? 5 : 0)
+                    .brightness(brightness)
                 
                 if isBlurred {
                     Color.black.opacity(0.6)
@@ -36,8 +37,8 @@ struct SceneBackgroundView: View {
                         LinearGradient(
                             stops: [
                                 .init(color: .clear, location: 0.0),
-                                .init(color: gradientColor, location: 0.2),
-                                .init(color: gradientColor, location: 1.0)
+                                .init(color: .black, location: 0.2),
+                                .init(color: .black, location: 1.0)
                             ],
                             startPoint: .top,
                             endPoint: .bottom

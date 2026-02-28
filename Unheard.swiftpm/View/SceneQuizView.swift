@@ -34,7 +34,7 @@ struct SceneQuizView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                currentStep.backgroundColor
+                Color.black
                 
                 if let quiz = quizInfo {
                     VStack(spacing: .defaultSpacing) {
@@ -43,7 +43,7 @@ struct SceneQuizView: View {
                         Text(quiz.question)
                             .font(.title)
                             .fontWeight(.bold)
-                            .foregroundStyle(currentStep.textColor)
+                            .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
                         
@@ -199,18 +199,17 @@ struct SceneQuizView: View {
             } label: {
                 ZStack {
                     Circle()
-                        .colorMultiply(currentStep.glowColor)
+                        .colorMultiply(.white)
                         .blur(radius: 50)
                         .frame(width: 100, height: 100)
                     
                     VStack {
                         CharacterFaceView(character: CharacterExpression.confused,
-                                          size: 150, showGradient: false,
-                                          gradientColor: currentStep.backgroundColor)
+                                          size: 150, showGradient: false)
                         
                         Text("💡 Need a hint?")
                             .font(.subheadline)
-                            .foregroundStyle(currentStep.accentTextColor.opacity(0.8))
+                            .foregroundStyle(.yellow.opacity(0.8))
                     }
                 }
             }
@@ -221,4 +220,3 @@ struct SceneQuizView: View {
         }
     }
 }
-
