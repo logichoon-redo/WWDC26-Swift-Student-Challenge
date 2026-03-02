@@ -12,11 +12,12 @@ struct StoryMessageView: View {
     @State private var showButton = false
     @Environment(StoryNavigationManager.self) private var navigationManager
     @Environment(SoundManager.self) private var soundManager
+    @Environment(LanguageManager.self) private var langManager
     
     let currentStep: StoryStep
     
     var storyInfo: StoryInfo? {
-        StoryData.messages[currentStep]
+        langManager.messages[currentStep]
     }
     
     var body: some View {
@@ -43,8 +44,8 @@ struct StoryMessageView: View {
                         
                         PageNavigationBar(showPrev: story.showPrevButton,
                                           showNext: story.showNextButton && showButton,
-                                          prevText: story.prevButtonText,
-                                          nextText: story.nextButtonText,
+                                          prevText: story.prevButtonText == "PREV" ? langManager.prevButton : story.prevButtonText,
+                                          nextText: story.nextButtonText == "NEXT" ? langManager.nextButton : story.nextButtonText,
                                           prevDestination: {
                             navigationManager.goBack()
                         },

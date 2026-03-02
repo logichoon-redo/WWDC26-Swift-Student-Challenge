@@ -16,6 +16,7 @@ enum QuizType {
 struct SceneQuizView: View {
     @Environment(StoryNavigationManager.self) private var navigationManager
     @Environment(SoundManager.self) private var soundManager
+    @Environment(LanguageManager.self) private var langManager
     
     @State private var showHintSheet = false
     @State private var showCorrectGIF = false
@@ -28,7 +29,7 @@ struct SceneQuizView: View {
     }
     
     private var quizInfo: QuizInfo? {
-        StoryData.quizzes[currentStep]
+        langManager.quizzes[currentStep]
     }
     
     var body: some View {
@@ -160,9 +161,9 @@ struct SceneQuizView: View {
         Button {
             if sceneNumber != 2 {
                 Task {
-                    if let lastStep = StoryData.messages[.scene(number: sceneNumber, phase: .tts)] {
+                    if let lastStep = langManager.messages[.scene(number: sceneNumber, phase: .tts)] {
                         let text = lastStep.text
-                        await soundManager.speakWithSigh(text: text)
+                        await soundManager.speakWithSigh(text: text, language: langManager.current.ttsLanguage)
                     }
                 }
             } else {

@@ -5,6 +5,7 @@ import SwiftUI
 struct MyApp: App {
     @State private var navigationManager = StoryNavigationManager()
     @State private var soundManager = SoundManager()
+    @State private var languageManager = LanguageManager()
     
     var body: some Scene {
         WindowGroup {
@@ -22,6 +23,7 @@ struct MyApp: App {
             .ignoresSafeArea()
             .environment(navigationManager)
             .environment(soundManager)
+            .environment(languageManager)
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                 soundManager.pauseAmbient()
             }

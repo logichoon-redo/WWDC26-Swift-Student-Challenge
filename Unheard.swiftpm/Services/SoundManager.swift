@@ -330,7 +330,7 @@ final class SoundManager: NSObject, @unchecked Sendable {
     // MARK: - Public API
     
     /// TTS 음성 재생
-    func speak(text: String, rate: Float = AVSpeechUtteranceDefaultSpeechRate, loudOnly: Bool = false) async {
+    func speak(text: String, rate: Float = AVSpeechUtteranceDefaultSpeechRate, loudOnly: Bool = false, language: String = "en-US") async {
         ttsBuffers.removeAll()
         
         isLoudOnlyMode = loudOnly
@@ -342,7 +342,7 @@ final class SoundManager: NSObject, @unchecked Sendable {
         }
         
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.voice = AVSpeechSynthesisVoice(language: language)
         utterance.rate = rate
         
         await withCheckedContinuation { continuation in
@@ -548,9 +548,9 @@ final class SoundManager: NSObject, @unchecked Sendable {
         }
     }
     
-    func speakWithSigh(text: String) async {
+    func speakWithSigh(text: String, language: String = "en-US") async {
         await playSoundEffect(named: "sigh")
         try? await Task.sleep(for: .seconds(1.7))
-        await speak(text: text, loudOnly: true)
+        await speak(text: text, loudOnly: true, language: language)
     }
 }

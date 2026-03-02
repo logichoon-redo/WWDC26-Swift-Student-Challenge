@@ -11,6 +11,7 @@ import SwiftUI
 struct SceneTTSView: View {
     @Environment(StoryNavigationManager.self) private var navigationManager
     @Environment(SoundManager.self) private var soundManager
+    @Environment(LanguageManager.self) private var langManager
     let sceneNumber: Int
     let currentStep: StoryStep
     
@@ -20,7 +21,7 @@ struct SceneTTSView: View {
         SceneConfig.config(for: sceneNumber)
     }
     private var storyInfo: StoryInfo? {
-        StoryData.messages[currentStep]
+        langManager.messages[currentStep]
     }
     
     var body: some View {
@@ -44,7 +45,7 @@ struct SceneTTSView: View {
             }
 
             if let story = storyInfo {
-                await soundManager.speak(text: story.text)
+                await soundManager.speak(text: story.text, language: langManager.current.ttsLanguage)
                 
                 try? await Task.sleep(for: .seconds(1))
                 

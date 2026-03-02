@@ -12,17 +12,23 @@ struct OutroDialogueView: View {
     @State private var showButton = false
     @Environment(StoryNavigationManager.self) private var navigationManager
     @Environment(SoundManager.self) private var soundManager
+    @Environment(LanguageManager.self) private var langManager
+    
     let currentStep: StoryStep
 
     private var storyInfo: StoryInfo? {
-        StoryData.messages[currentStep]
+        langManager.messages[currentStep]
     }
     
-    private let bcQuizzes: [(emoji: String, title: String, step: StoryStep)] = [
-        ("☕️", "Coffee Shop", .scene(number: 1, phase: .quiz(page: 2))),
-        ("🚇", "Subway", .scene(number: 2, phase: .quiz(page: 2))),
-        ("💼", "Team Meeting", .scene(number: 3, phase: .quiz(page: 2)))
-    ]
+    private var bcQuizzes: [(emoji: String, title: String, step: StoryStep)] {
+        langManager.current == .korean
+        ? [("☕️", "카페", .scene(number: 1, phase: .quiz(page: 2))),
+           ("🚇", "지하철", .scene(number: 2, phase: .quiz(page: 2))),
+           ("💼", "팀 회의", .scene(number: 3, phase: .quiz(page: 2)))]
+        : [("☕️", "Coffee Shop", .scene(number: 1, phase: .quiz(page: 2))),
+           ("🚇", "Subway", .scene(number: 2, phase: .quiz(page: 2))),
+           ("💼", "Team Meeting", .scene(number: 3, phase: .quiz(page: 2)))]
+    }
     
     var body: some View {
         GeometryReader { geo in
@@ -50,7 +56,7 @@ struct OutroDialogueView: View {
                         CharacterFaceView(character: story.expression)
                         
                         VStack(spacing: 12) {
-                            Text("Try again")
+                            Text(langManager.tryAgain)
                                 .font(.caption)
                                 .foregroundStyle(.white.opacity(0.5))
                             
@@ -88,7 +94,7 @@ struct OutroDialogueView: View {
                         } label: {
                             HStack(spacing: 8) {
                                 Image(systemName: "arrow.counterclockwise")
-                                Text("Experience Again")
+                                Text(langManager.experienceAgain)
                             }
                             .font(.body)
                             .fontWeight(.semibold)

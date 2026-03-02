@@ -13,6 +13,7 @@ struct SceneDialogueView: View {
     @State private var showLocationToast = false
     @Environment(StoryNavigationManager.self) private var navigationManager
     @Environment(SoundManager.self) private var soundManager
+    @Environment(LanguageManager.self) private var langManager
     let sceneNumber: Int
     let currentStep: StoryStep
     
@@ -21,7 +22,7 @@ struct SceneDialogueView: View {
     }
     
     private var storyInfo: StoryInfo? {
-        StoryData.messages[currentStep]
+        langManager.messages[currentStep]
     }
     
     private var isBCScene: Bool {
@@ -57,8 +58,8 @@ struct SceneDialogueView: View {
                         
                         PageNavigationBar(showPrev: story.showPrevButton,
                                           showNext: story.showNextButton && showButton,
-                                          prevText: story.prevButtonText,
-                                          nextText: story.nextButtonText,
+                                          prevText: story.prevButtonText == "PREV" ? langManager.prevButton : story.prevButtonText,
+                                          nextText: story.nextButtonText == "NEXT" ? langManager.nextButton : story.nextButtonText,
                                           prevDestination: { navigationManager.goBack()
                             let suffix = String(story.id.suffix(2))
                             if suffix == "d1" {
@@ -81,9 +82,9 @@ struct SceneDialogueView: View {
                 
                 VStack {
                     if showLocationToast {
-                        LocationToastView(text: config.locationName)
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .padding(.top, 60)
+                        LocationToastView(text: langManager.locationName(for: config))
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .padding(.top, 60)
                     }
                     
                     Spacer()
