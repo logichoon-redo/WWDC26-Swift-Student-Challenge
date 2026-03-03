@@ -174,7 +174,7 @@ struct SceneQuizView: View {
             HStack {
                 Image(systemName: "speaker.wave.2.fill")
                 
-                Text("Sorry, could you say that again?")
+                Text(langManager.replayButton)
             }
             .font(.body)
             .foregroundStyle(.white)
@@ -211,8 +211,9 @@ struct SceneQuizView: View {
                         CharacterFaceView(character: CharacterExpression.confused,
                                           size: 150, showGradient: false)
                         
-                        Text("💡 Need a hint?")
-                            .font(.subheadline)
+                        Text(langManager.needAHint)
+                            .font(.title3)
+                            .bold()
                             .foregroundStyle(.yellow.opacity(0.8))
                     }
                 }

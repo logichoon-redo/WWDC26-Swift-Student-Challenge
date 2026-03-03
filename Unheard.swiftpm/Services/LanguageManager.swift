@@ -108,6 +108,10 @@ class LanguageManager {
         current == .korean ? "다음" : "NEXT"
     }
     
+    var needAHint: String {
+        current == .korean ? "💡 힌트가 필요해요?" : "💡 Need a hint?"
+    }
+    
     func locationName(for config: SceneConfig) -> String {
         current == .korean ? config.locationNameKR : config.locationName
     }
