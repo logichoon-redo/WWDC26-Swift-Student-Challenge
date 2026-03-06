@@ -1,6 +1,8 @@
 # Unheard
 ### 🙉 Submitted for WWDC26 Swift Student Challenge
->들리지 않는 세상
+> an inaudible world
+> 
+> 들리지 않는 세상
 
 
 466 million people worldwide have hearing loss. But most people don't understand what it actually feels like.
