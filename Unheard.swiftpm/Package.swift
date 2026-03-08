@@ -17,7 +17,6 @@ let package = Package(
             name: "Unheard",
             targets: ["AppModule"],
             bundleIdentifier: "ChiHoonLee.Unheard",
-            teamIdentifier: "GHGPAZGBBT",
             displayVersion: "1.0",
             bundleVersion: "1",
             appIcon: .asset("AppIcon"),
