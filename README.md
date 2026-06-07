@@ -19,6 +19,6 @@ Unheard는 제가 듣는 세상을 당신도 들을 수 있게 해주는 몰입�
 하지만 인식만으로는 충분하지 않아요. 제 어려움을 체험한 후, 당신은 간단한 도움 방법을 배우게 돼요: 말할 때 얼굴을 마주 보기, 시각적 신호 사용하기, 반복하지 말고 다른 말로 바꾸기.
 이건 단순한 앱이 아니에요. 제 이야기예요. 그리고 당신에게 오래 남길 바라요.
 
-<img width="190" height="868" alt="intro" src="https://github.com/user-attachments/assets/df8de0f0-44ee-42f1-86e3-873453d1e78d" />
-<img width="190" height="868" alt="Quiz1" src="https://github.com/user-attachments/assets/dec35334-43e1-4ca4-8afa-fc3ff0cfd281" />
-<img width="190" height="868" alt="Quiz2" src="https://github.com/user-attachments/assets/bd7a91ec-584a-46c4-a40a-636aa69d1a85" />
+<img height="700" alt="intro" src="https://github.com/user-attachments/assets/df8de0f0-44ee-42f1-86e3-873453d1e78d" />
+<img height="700" alt="Quiz1" src="https://github.com/user-attachments/assets/dec35334-43e1-4ca4-8afa-fc3ff0cfd281" />
+<img height="700" alt="Quiz2" src="https://github.com/user-attachments/assets/bd7a91ec-584a-46c4-a40a-636aa69d1a85" />
